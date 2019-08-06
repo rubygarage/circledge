@@ -1,4 +1,4 @@
-1. [Introduction to Continuous Integration/Deployment/Delivery](1.md)
+1. [Introduction to Continuous Integration/Deployment/Delivery](introduction.md)
 
 2. [Introduction to CircleCi](2.md)
 
