@@ -117,7 +117,7 @@ CircleCI maintains images for the services below.
 
 #### Sample Configuration
 
-```yml
+```yaml
 version: 2
 jobs:
   build:
@@ -135,3 +135,45 @@ jobs:
 ## Steps	
 ## Jobs
 ## Workflows
+## Jobs, Steps and Workflows
+#### Jobs
+
+Jobs are a collection of Steps. All of the steps in the job are executed in a single unit which consumes a CircleCI 
+container from your plan while it’s running.
+
+Jobs and Steps enable greater control and provide a framework for workflows and status on each phase of a run to 
+report more frequent feedback. The following diagram illustrates how data flows between jobs. Workspaces persist 
+data between jobs in a single Workflow. Caching persists data between the same job in different Workflow builds. 
+Artifacts persist data after a Workflow has finished.
+
+![workflow](images/workflow_and_jobs.png)
+
+#### Steps
+
+Steps are a collection of executable commands which are run during a job, the `checkout:` key is required to checkout 
+your code and a key for `run:` enables addition of arbitrary, multi-line shell command scripting. In addition 
+to the `run:` key, keys for `save_cache:`, `restore_cache:`, `deploy:`, `store_artifacts:`, `store_test_results:` and 
+`add_ssh_keys` are nested under Steps.
+
+```yaml
+version: 2
+jobs:
+  build:
+    docker:
+      - image: circleci/<language>:<version TAG>
+    steps:
+      - checkout
+      - run: <command>
+  test:
+    docker:
+      - image: circleci/<language>:<version TAG>
+    steps:
+      - checkout
+      - run: <command>
+workflows:
+  version: 2
+  build_and_test:
+    jobs:
+      - build
+      - test
+```
