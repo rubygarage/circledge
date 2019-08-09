@@ -69,7 +69,7 @@ on Docker Hub](https://hub.docker.com/search?q=circleci&type=image).
 CircleCI’s convenience images fall into two categories: **language images** and **service images**. 
 All images add a circleci user as a system user.
 
-##### Language Images
+#### Language Images
 
 Language images are convenience images for common programming languages. These images include both the relevant 
 language and commonly-used tools. A language image should be listed first under the docker key in your configuration, 
@@ -89,7 +89,7 @@ CircleCI maintains images for the languages below.
 * Ruby
 * Rust
 
-##### Language Image Variants
+#### Language Image Variants
 
 CircleCI maintains several variants for language images. To use these variants, add one of the following suffixes 
 to the end of an image tag.
@@ -100,7 +100,7 @@ to the end of an image tag.
 * `-node-browsers` combines the -node and -browsers variants
 * `-node-browsers-legacy` combines the -node and -browsers-legacy variants
 
-##### Service Images
+#### Service Images
 
 Service images are convenience images for services like databases. These images should be listed after language images 
 so they become secondary service containers.
@@ -115,7 +115,7 @@ CircleCI maintains images for the services below.
 * PostgreSQL
 * Redis
 
-##### Sample Configuration
+#### Sample Configuration
 
 ```yml
 version: 2
