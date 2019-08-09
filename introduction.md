@@ -129,9 +129,141 @@ jobs:
 
 
 ## Environment variables
+
+Environment variables are used according to a specific precedence order, as follows:
+
+1. Environment variables declared inside a shell command in a run step, for example FOO=bar make install.
+2. Environment variables declared with the environment key for a run step.
+3. Environment variables set with the environment key for a job.
+4. Environment variables set with the environment key for a container.
+5. Context environment variables (assuming the user has access to the Context).
+6. Project-level environment variables set on the Project Settings page.
+7. Special CircleCI environment variables.
+
+**Note:** Do not add secrets or keys inside the `.circleci/config.yml` file. The full text of `config.yml` is visible to 
+developers with access to your project on CircleCI. Store secrets or keys in project or context settings 
+in the CircleCI app.
+
+#### Setting an Environment Variable in a Shell Command
+
+While CircleCI does not support interpolation when setting environment variables, it is possible to set variables for 
+the current shell by using BASH_ENV. This is useful for both modifying your PATH and setting environment variables 
+that reference other variables.
+
+In every step, CircleCI uses bash to source BASH_ENV. This means that BASH_ENV is automatically loaded and run, 
+allowing you to use interpolation and share environment variables across run steps.
+
+```yml
+version: 2
+jobs:
+  build:
+    docker:
+      - image: smaant/lein-flyway:2.7.1-4.0.3
+    steps:
+      - run:
+          name: Update PATH and Define Environment Variable at Runtime
+          command: |
+            echo 'export PATH=/path/to/foo/bin:$PATH' >> $BASH_ENV
+            echo 'export VERY_IMPORTANT=$(cat important_value)' >> $BASH_ENV
+            source $BASH_ENV
+```
+
+#### Setting an Environment Variable in a Step, Job, Container
+To set an environment variable use the environment key.
+
+```yml
+version: 2
+jobs:
+  build:
+    docker:
+      - image: smaant/lein-flyway:2.7.1-4.0.3
+      - image: circleci/postgres:9.6-jessie
+      # environment variables for all commands executed in the primary container
+        environment:
+          POSTGRES_USER: conductor
+          POSTGRES_DB: conductor_test
+  # environment variables for all commands executed in the job
+    environment:
+      JOB_VARIABLE: 'foo'
+    steps:
+      - checkout
+      - run:
+          name: Run migrations
+          command: sql/docker-entrypoint.sh sql
+          # Environment variable for a single command shell
+          environment:
+            DATABASE_URL: postgres://conductor:@localhost:5432/conductor_test
+```
+
+#### Setting an Environment Variable in a Project
+
+1. In the CircleCI application, go to your project’s settings by clicking the gear icon next to your project.
+2. In the **Build Settings** section, click on **Environment Variables**.
+3. Import variables from another project by clicking the **Import Variable(s)** button. Add new variables by clicking 
+the **Add Variable** button.
+4. Use your new environment variables in your `.circleci/config.yml` file.
+
+Once created, environment variables are hidden and uneditable in the application. Changing an environment variable 
+is only possible by deleting and recreating it.
+
+#### Injecting Environment Variables with the API
+
+Build parameters are environment variables, therefore their names have to meet the following restrictions:
+
+* They must contain only ASCII letters, digits and the underscore character.
+* They must not begin with a number.
+* They must contain at least one character.
+
+Aside from the usual constraints for environment variables there are no restrictions on the values themselves and 
+are treated as simple strings. The order that build parameters are loaded in is not guaranteed so avoid interpolating 
+one build parameter into another. It is best practice to set build parameters as an unordered list of independent 
+environment variables.
+
+```bash
+curl \
+  --header "Content-Type: application/json" \
+  --data '{"build_parameters": {"param1": "value1", "param2": 500}}' \
+  --request POST \
+  https://circleci.com/api/v1.1/project/github/circleci/mongofinil/tree/master?circle-token=$CIRCLE_TOKEN
+```
+
+In the above example, `$CIRCLE_TOKEN` is a personal API token.
+
+#### Built-in Environment Variables
+
+| Variable                  | Type    | Value                                                                                                                                     |
+|---------------------------|---------|-------------------------------------------------------------------------------------------------------------------------------------------|
+| CI                        | Boolean | true (represents whether the current environment is a CI environment)                                                                     |
+| CI_PULL_REQUEST           | String  | Deprecated version of CIRCLE_PULL_REQUEST. Kept for backward compatibility with CircleCI 1.0.                                             |
+| CI_PULL_REQUESTS          | List    | Deprecated version of CIRCLE_PULL_REQUESTS. Kept for backward compatibility with CircleCI 1.0.                                            |
+| CIRCLE_BRANCH             | String  | The name of the Git branch currently being built.                                                                                         |
+| CIRCLE_BUILD_NUM          | Integer | The number of the CircleCI build.                                                                                                         |
+| CIRCLE_BUILD_URL          | String  | The URL for the current build.                                                                                                            |
+| CIRCLE_COMPARE_URL        | String  | The GitHub or Bitbucket URL to compare commits of a build.                                                                                |
+| CIRCLE_INTERNAL_TASK_DATA | String  | The directory where test timing data is saved.                                                                                            |
+| CIRCLE_JOB                | String  | The name of the current job.                                                                                                              |
+| CIRCLE_NODE_INDEX         | Integer | The index of the specific build instance. A value between 0 and (CIRCLECI_NODE_TOTAL - 1)                                                 |
+| CIRCLE_NODE_TOTAL         | Integer | The number of total build instances.                                                                                                      |
+| CIRCLE_PR_NUMBER          | Integer | The number of the associated GitHub or Bitbucket pull request. Only available on forked PRs.                                              |
+| CIRCLE_PR_REPONAME        | String  | The name of the GitHub or Bitbucket repository where the pull request was created. Only available on forked PRs.                          |
+| CIRCLE_PR_USERNAME        | String  | The GitHub or Bitbucket username of the user who created the pull request. Only available on forked PRs.                                  |
+| CIRCLE_PREVIOUS_BUILD_NUM | Integer | The number of previous builds on the current branch.                                                                                      |
+| CIRCLE_PROJECT_REPONAME   | String  | The name of the repository of the current project.                                                                                        |
+| CIRCLE_PROJECT_USERNAME   | String  | The GitHub or Bitbucket username of the current project.                                                                                  |
+| CIRCLE_PULL_REQUEST       | String  | The URL of the associated pull request. If there are multiple associated pull requests, one URL is randomly chosen.                       |
+| CIRCLE_PULL_REQUESTS      | List    | Comma-separated list of URLs of the current build’s associated pull requests.                                                             |
+| CIRCLE_REPOSITORY_URL     | String  | The URL of your GitHub or Bitbucket repository.                                                                                           |
+| CIRCLE_SHA1               | String  | The SHA1 hash of the last commit of the current build.                                                                                    |
+| CIRCLE_TAG                | String  | The name of the git tag, if the current build is tagged. For more information, see the Git Tag Job Execution.                             |
+| CIRCLE_USERNAME           | String  | The GitHub or Bitbucket username of the user who triggered the build.                                                                     |
+| CIRCLE_WORKFLOW_ID        | String  | A unique identifier for the workflow instance of the current job. This identifier is the same for every job in a given workflow instance. |
+| CIRCLE_WORKING_DIRECTORY  | String  | The value of the working_directory key of the current job.                                                                                |
+| CIRCLECI                  | Boolean | true (represents whether the current environment is a CircleCI environment)                                                               |
+| HOME                      | String  | Your home directory.                                                                                                                      |
+
 ## Caching
 ## Containers/Parallelism/Jobs
 ## Project configurations
-## Steps	
+## Steps
 ## Jobs
 ## Workflows
