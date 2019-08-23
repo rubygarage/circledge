@@ -119,6 +119,27 @@ steps:
       keys:
         - v1-gem-cache-{{ arch }}-{{ .Branch }}-{{ checksum "Gemfile.lock" }}
 ```
+Partial Cache Restoration can be used for Bundler, but it is required to add a step that cleans Bundler before restoring dependencies from cache.
+A config for partial gems caching looks like this:
+```
+steps:
+  - restore_cache:
+      keys:
+        # when lock file changes, use increasingly general patterns to restore cache
+        - v1-gem-cache-{{ arch }}-{{ .Branch }}-{{ checksum "Gemfile.lock" }}
+        - v1-gem-cache-{{ arch }}-{{ .Branch }}-
+        - v1-gem-cache-{{ arch }}-
+  # clean Bunlder
+  - run: bundle install && bundle clean
+  - save_cache:
+      paths:
+        - ~/.bundle
+      key: v1-gem-cache-{{ arch }}-{{ .Branch }}-{{ checksum "Gemfile.lock" }}
+```
+#### Best Practices
+- If your source code changes frequently, use fewer, more specific keys. This produces a more granular source cache that will update more often as the current branch and git revision change. E.g. `source-v1-{{ .Branch }}-{{ .Revision }}`
+- Use checksum for lockfiles (for example, `Gemfile.lock` or `yarn.lock`)
+
 
 ## Containers/Parallelism/Jobs
 ## Project configurations
