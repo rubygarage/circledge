@@ -262,10 +262,10 @@ In the above example, `$CIRCLE_TOKEN` is a personal API token.
 | HOME                      | String  | Your home directory.                                                                                                                      |
 
 #### Best Practices
-The best way to store environment variables is keeping them in the repository. In this way you avoid problems with 
+* The best way to store environment variables is keeping them in the repository. In this way you avoid problems with 
 absent or wrong variables. 
 
-Variables, that needed only on CircleCI or secret variables, should be stored in CircleCi 
+* Variables, that needed only on CircleCI or secret variables, should be stored in CircleCi 
 Project Setting page.
 
 ## Caching
