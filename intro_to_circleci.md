@@ -440,9 +440,16 @@ By default, CircleCI builds every commit from every branch. This behavior may be
 ### Build Pull Requests From Forked Repositories
 Many open source projects accept PRs from forked repositories. Building these PRs is an effective way to catch bugs before manually reviewing changes.
 
-By default, CircleCI does not build PRs from forked repositories. To change this setting, go to the Advanced Settings of your project and set the Build forked pull requests option to On.
+By default, CircleCI does not build PRs from forked repositories. To change this setting, go to the **Advanced Settings** of your project and set the **Build forked pull requests** option to On.
 
+### Caching
+Caches are isolated based on GitHub Repo for PRs. CircleCI uses the GitHub repository-id of the originator of the fork PR to identify the cache.
 
+- PRs from the same fork repo will share a cache (this includes, as previously stated, that PRs in the master repo share a cache with master).
+
+- Two PRs in different Fork Repos will have different caches.
+
+Currently there is no pre-population of caches because this optimization hasn’t made it to the top of the priority list yet.
 
 ## Steps
 The steps setting in a job should be a list of single key/value pairs, the key of which indicates the step type. The value may be either a configuration map or a string (depending on what that type of step requires). For example, using a map:
@@ -477,7 +484,7 @@ If you are using [Workflows](https://circleci.com/docs/2.0/workflows/), jobs mus
 
 If you are **not** using workflows, the jobs map must contain a job named ```build```. This ```build``` job is the default entry-point for a run that is triggered by a push to your VCS provider. It is possible to then specify additional jobs and run them using the CircleCI API.
 
-Note: Jobs have a maximum runtime of 5 hours. If your jobs are timing out, consider running some of them in parallel.
+**Note:** Jobs have a maximum runtime of 5 hours. If your jobs are timing out, consider running some of them in parallel.
 
 Each job consists of the job’s name as a key and a map as a value. A name should be unique within a current jobs list. The value map has the following attributes:
 
@@ -494,3 +501,65 @@ Each job consists of the job’s name as a key and a map as a value. A name shou
 | branches | N | Map | 	A map defining rules for allow/block execution of specific branches for a single job that is not in a workflow or a 2.1 config (default: all allowed). See [Workflows]() for configuring branch execution for jobs in a workflow or 2.1 config. |
 
 ## Workflows
+A **workflow** is a set of rules for defining a collection of jobs and their run order. Workflows support complex job orchestration using a simple set of configuration keys to help you resolve failures sooner.
+
+With workflows, you can:
+
+- Run and troubleshoot jobs independently with real-time status feedback.
+- Schedule workflows for jobs that should only run periodically.
+- Fan-out to run multiple jobs in parallel for efficient version testing.
+- Fan-in to quickly deploy to multiple platforms.
+
+For example, if only one job in a workflow fails, you will know it is failing in real-time. Instead of wasting time waiting for the entire build to fail and rerunning the entire job set, you can rerun just the failed job.
+
+### States
+Workflows may appear with one of the following states:
+
+- RUNNING: Workflow is in progress
+- NOT RUN: Workflow was never started
+- CANCELLED: Workflow was cancelled before it finished
+- FAILING: A job in the workflow has failed. Workflows go into Failing state when one of the jobs within the graph has failed while other jobs are still running. Failing state indicates that the workflow is eventually going to fail.
+- FAILED: One or more jobs in the workflow failed. Failed state is when one or more jobs in the workflow graph have failed. Failed is a terminal state.
+- SUCCESS: All jobs in the workflow completed successfully
+- ON HOLD: A job in the workflow is waiting for approval
+- NEEDS SETUP: A workflow stanza is not included or is incorrect in the config.yml file for this project
+
+
+### Limitations
+Projects that have pipelines enabled may use the CircleCI API to trigger workflows. Projects that do not enable pipelines will run as if the workflows did not exist when triggered by the API. Note: Builds without workflows require a ```build``` job.
+
+Refer to the [Workflows](https://circleci.com/docs/2.0/faq/) section of the FAQ for additional information and limitations.
+
+### Workflows Configuration Examples
+For a full specification of the ```workflows``` key, see the [Workflows](https://circleci.com/docs/2.0/configuration-reference/#workflows) section of the Configuring CircleCI document.
+
+**Note:** Projects configured with Workflows often include multiple jobs that share syntax for Docker images, environment variables, or ```run``` steps. Refer the [YAML Anchors/Aliases](https://yaml.org/spec/1.2/spec.html#id2765878) documentation for information about how to alias and reuse syntax to keep your ```.circleci/config.yml``` file small. See the [Reuse YAML in the CircleCI Config](https://circleci.com/blog/circleci-hacks-reuse-yaml-in-your-circleci-config-with-yaml/) blog post for a summary.
+
+To run a set of parallel jobs, add a new ```workflows```: section to the end of your existing ```.circleci/config.yml``` file with the version and a unique name for the workflow. The following sample ```.circleci/config.yml``` file shows the default workflow orchestration with two parallel jobs. It is defined by using the ```workflows```: key named ```build_and_test``` and by nesting the ```jobs:``` key with a list of job names. The jobs have no dependencies defined, therefore they will run in parallel.
+
+```yml
+jobs:
+  build:
+    docker:
+      - image: circleci/<language>:<version TAG>
+    steps:
+      - checkout
+      - run: <command>
+  test:
+    docker:
+      - image: circleci/<language>:<version TAG>
+    steps:
+      - checkout
+      - run: <command>
+workflows:
+  version: 2
+  build_and_test:
+    jobs:
+      - build
+      - test
+```
+See the [Sample Parallel Workflow config](https://github.com/CircleCI-Public/circleci-demo-workflows/blob/parallel-jobs/.circleci/config.yml) for a full example.
+
+
+
+
