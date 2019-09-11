@@ -1,6 +1,6 @@
 1. [Introduction to Continuous Integration/Deployment/Delivery](introduction.md)
 
-2. [Introduction to CircleCi](2.md)
+2. [Introduction to CircleCi](intro_to_circleci.md)
 
 3. [Orbs + Sample of Orb](3.md)
 
