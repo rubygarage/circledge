@@ -1,5 +1,8 @@
 # Introduction to CircleCi
 
+**CircleCI** is a continuous integration service for web and mobile applications.
+One of the advantages of this service is the build in the cloud, that is, you do not need a local build machine. The service allows you to flexibly configure assembly testing, as the user has access to ```sudo```.
+
 CircleCI integrates with a VCS and automatically runs a series of steps every time that it detects a change to your repository.
 
 A CircleCI build consists of a series of steps. Generally, they’re:
@@ -21,28 +24,13 @@ A CircleCI build consists of a series of steps. Generally, they’re:
 
 ## Pros and Cons
 
-### Pros:
+### Main CircleCI strength
 
-- **Generous free plans** for open source projects easy to set up plenty of features plenty of customization runs quick
-
-- **Simple UI**(user interface) CircleCI is recognized for its user-friendly interface for managing builds/jobs. Its single-page web app is clean and easy to understand
-
-- **High-quality customer support.** StackShare’s community members highlight CircleCI’s speedy support: They respond to requests within 12 hours.
-
-- CircleCI runs **all types of software tests** including web, mobile, and container environments.
-
-- **Caching of requirements installation and third-party dependencies.** Instead of installing the environments, CircleCI can take data from multiple projects using the granular check-out-key options.
-
-- **No need for manual debugging.** CircleCI has debugging feature Debug via SSH, but Jenkins users have to debug manually by clicking on jobs.
-
-### Cons:
-- config file ```.circleci/config.yml``` tends to get too long 
-
-- High price for private repositories and large projects
-
-- You can put only **one** language image in a container
-
-- CircleCI in the free version only supports Ubuntu. To use MacOS or Windows you will have to pay
+**Simple UI**(user interface) CircleCI is recognized for its user-friendly interface for managing builds/jobs. Its single-page web app is clean and easy to understand
+**High-quality customer support.** StackShare’s community members highlight CircleCI’s speedy support: They respond to requests within 12 hours.
+CircleCI runs **all types of software tests** including web, mobile, and container environments.
+**Caching of requirements installation and third-party dependencies.** Instead of installing the environments, CircleCI can take data from multiple projects using the granular check-out-key options.
+**No need for manual debugging.** CircleCI has debugging feature Debug via SSH, but Jenkins users have to debug manually by clicking on jobs.
 
 ## Executors and Images
 
