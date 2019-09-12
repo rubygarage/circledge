@@ -27,6 +27,8 @@
 
 - **No need for manual debugging.** CircleCI has debugging feature Debug via SSH, but Jenkins users have to debug manually by clicking on jobs.
 
+- ability to **local** setup CircleCi
+
 ### Cons:
 - config file ```.circleci/config.yml``` tends to get too long 
 
@@ -35,6 +37,8 @@
 - You can put only **one** language image in a container
 
 - CircleCI in the free version only supports Ubuntu. To use MacOS or Windows you will have to pay
+
+- the local version has a limitation compared to the cloud CircleCi
 
 ## Executors and Images
 
