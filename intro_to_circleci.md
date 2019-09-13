@@ -40,6 +40,8 @@
 
 - the local version has a limitation compared to the cloud CircleCi
 
+- shared containers between all projects
+
 ## Executors and Images
 
 ### Overview
