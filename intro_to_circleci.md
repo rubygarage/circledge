@@ -1,5 +1,16 @@
 # Introduction to CircleCi
 
+**CircleCI** is a continuous integration service for web and mobile applications.
+One of the advantages of this service is the build in the cloud, that is, you do not need a local build machine. The service allows you to flexibly configure assembly testing, as the user has access to ```sudo```.
+
+CircleCI integrates with a VCS and automatically runs a series of steps every time that it detects a change to your repository.
+
+A CircleCI build consists of a series of steps. Generally, they’re:
+
+- Dependencies
+- Testing
+- Deployment
+
 ## CircleCi - Analogues
 
 |                              | [Circle CI](https://circleci.com/)   | [Travis CI](https://travis-ci.org/) | [Bamboo](https://www.atlassian.com/software/bamboo) | [GitLab CI](https://docs.gitlab.com/ee/ci/)       | [Jenkins](https://jenkins.io/) | [TeamCity](https://www.jetbrains.com/teamcity/) | [Codeship](https://codeship.com/) | [GitHub Actions](https://github.com/features/actions) |
@@ -30,6 +41,7 @@
 - ability to **local** setup CircleCi
 
 ### Cons:
+
 - Config file ```.circleci/config.yml``` tends to get **too long** 
 
 - **High price** for private repositories and large projects
