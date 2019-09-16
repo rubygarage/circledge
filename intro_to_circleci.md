@@ -2,14 +2,14 @@
 
 ## CircleCi - Analogues
 
-|                              | [Circle CI](https://circleci.com/)   | [Travis CI](https://travis-ci.org/) | [Bamboo](https://www.atlassian.com/software/bamboo) | [GitLab CI](https://docs.gitlab.com/ee/ci/)       | [Jenkins](https://jenkins.io/) | [TeamCity](https://www.jetbrains.com/teamcity/) | [Codeship](https://codeship.com/) |
-|------------------------------|--------------------------------------|-------------------------------------|-----------------------------------------------------|---------------------------------------------------|--------------------------------|-------------------------------------------------|-----------------------------------|
-| Supports CD                  | yes                                  | no                                  | yes                                                 | yes                                               | yes                            | yes                                             | yes                               |
-| Cloud hosting                | yes                                  | yes                                 | yes                                                 | yes                                               | yes                            | no                                              | yes                               |
-| Paid version price           | $50-3,150 per month                  | $69-489 per month                   | $10-110,000 one-off payment                         | $4-99 per month                                   | -                              | $299-21,999 one-off payment                     | $75-1,500 per month               |
-| Docs and support             | Good                                 | Poor                                | Good                                                | Good                                              | Adequate                       | Good                                            | Poor                              |
-| Learning curve and usability | Easy                                 | Easy                                | Medium                                              | Easy                                              | Easy                           | Medium                                          | Easy                              |
-| Use case                     | For fast development and high budget | For small projects and startups     | For Atlassian integrations                          | For any project                                   | For big projects               | For enterprise needs                            | For any project                   |
+|                              | [Circle CI](https://circleci.com/)   | [Travis CI](https://travis-ci.org/) | [Bamboo](https://www.atlassian.com/software/bamboo) | [GitLab CI](https://docs.gitlab.com/ee/ci/)       | [Jenkins](https://jenkins.io/) | [TeamCity](https://www.jetbrains.com/teamcity/) | [Codeship](https://codeship.com/) | [GitHub Actions](https://github.com/features/actions) |
+| --- | --- | --- | --- | --- | --- | --- | --- | --- |
+| Supports CD | yes | no | yes | yes | yes | yes | yes | yes |
+| Cloud hosting | yes | yes | yes | yes | yes | no | yes | yes |
+| Paid version price | $50-3,150 per month | $69-489 per month | $10-110,000 one-off payment | $4-99 per month | - | $299-21,999 one-off payment | $75-1,500 per month |  $0-4,380 per month |
+| Docs and support | Good | Poor | Good | Good | Adequate | Good | Poor | Adequate |
+| Learning curve and usability | Easy | Easy | Medium | Easy | Easy | Medium | Easy | Easy |
+| Use case | For fast development and high budget | For small projects and startups | For Atlassian integrations |For any project | For big projects | For enterprise needs | For any project | For any project |
 
 ## Pros and Cons
 
