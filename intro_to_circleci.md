@@ -13,24 +13,46 @@ A CircleCI build consists of a series of steps. Generally, they’re:
 
 ## CircleCi - Analogues
 
-|                              | [Circle CI](https://circleci.com/)   | [Travis CI](https://travis-ci.org/) | [Bamboo](https://www.atlassian.com/software/bamboo) | [GitLab CI](https://docs.gitlab.com/ee/ci/)       | [Jenkins](https://jenkins.io/) | [TeamCity](https://www.jetbrains.com/teamcity/) | [Codeship](https://codeship.com/) |
-|------------------------------|--------------------------------------|-------------------------------------|-----------------------------------------------------|---------------------------------------------------|--------------------------------|-------------------------------------------------|-----------------------------------|
-| Supports CD                  | yes                                  | no                                  | yes                                                 | yes                                               | yes                            | yes                                             | yes                               |
-| Cloud hosting                | yes                                  | yes                                 | yes                                                 | yes                                               | yes                            | no                                              | yes                               |
-| Paid version price           | $50-3,150 per month                  | $69-489 per month                   | $10-110,000 one-off payment                         | $4-99 per month                                   | -                              | $299-21,999 one-off payment                     | $75-1,500 per month               |
-| Docs and support             | Good                                 | Poor                                | Good                                                | Good                                              | Adequate                       | Good                                            | Poor                              |
-| Learning curve and usability | Easy                                 | Easy                                | Medium                                              | Easy                                              | Easy                           | Medium                                          | Easy                              |
-| Use case                     | For fast development and high budget | For small projects and startups     | For Atlassian integrations                          | For any project                                   | For big projects               | For enterprise needs                            | For any project                   |
+|                              | [Circle CI](https://circleci.com/)   | [Travis CI](https://travis-ci.org/) | [Bamboo](https://www.atlassian.com/software/bamboo) | [GitLab CI](https://docs.gitlab.com/ee/ci/)       | [Jenkins](https://jenkins.io/) | [TeamCity](https://www.jetbrains.com/teamcity/) | [Codeship](https://codeship.com/) | [GitHub Actions](https://github.com/features/actions) |
+| --- | --- | --- | --- | --- | --- | --- | --- | --- |
+| Supports CD | yes | no | yes | yes | yes | yes | yes | yes |
+| Cloud hosting | yes | yes | yes | yes | yes | no | yes | yes |
+| Paid version price | $50-3,150 per month | $69-489 per month | $10-110,000 one-off payment | $4-99 per month | - | $299-21,999 one-off payment | $75-1,500 per month |  $0-4,380 per month |
+| Docs and support | Good | Poor | Good | Good | Adequate | Good | Poor | Adequate |
+| Learning curve and usability | Easy | Easy | Medium | Easy | Easy | Medium | Easy | Easy |
+| Use case | For fast development and high budget | For small projects and startups | For Atlassian integrations |For any project | For big projects | For enterprise needs | For any project | For any project |
 
 ## Pros and Cons
 
-### Main CircleCI strength
+### Pros:
 
-**Simple UI**(user interface) CircleCI is recognized for its user-friendly interface for managing builds/jobs. Its single-page web app is clean and easy to understand
-**High-quality customer support.** StackShare’s community members highlight CircleCI’s speedy support: They respond to requests within 12 hours.
-CircleCI runs **all types of software tests** including web, mobile, and container environments.
-**Caching of requirements installation and third-party dependencies.** Instead of installing the environments, CircleCI can take data from multiple projects using the granular check-out-key options.
-**No need for manual debugging.** CircleCI has debugging feature Debug via SSH, but Jenkins users have to debug manually by clicking on jobs.
+- **Generous free plans** for open source projects easy to set up plenty of features plenty of customization runs quick
+
+- **Simple UI**(user interface) CircleCI is recognized for its user-friendly interface for managing builds/jobs. Its single-page web app is clean and easy to understand
+
+- **High-quality customer support.** StackShare’s community members highlight CircleCI’s speedy support: They respond to requests within 12 hours.
+
+- CircleCI runs **all types of software tests** including web, mobile, and container environments.
+
+- **Caching of requirements installation and third-party dependencies.** Instead of installing the environments, CircleCI can take data from multiple projects using the granular check-out-key options.
+
+- **No need for manual debugging.** CircleCI has debugging feature Debug via SSH, but Jenkins users have to debug manually by clicking on jobs.
+
+- ability to **local** setup CircleCi
+
+### Cons:
+
+- Config file ```.circleci/config.yml``` tends to get **too long** 
+
+- **High price** for private repositories and large projects
+
+- You can put **only one** language image in a container
+
+- CircleCI in the free version **only** supports Ubuntu. To use MacOS or Windows you will have to pay
+
+- The local version has a **limitation** compared to the cloud CircleCi
+
+- **Shared containers** between all projects
 
 ## Executors and Images
 
