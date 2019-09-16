@@ -13,13 +13,34 @@
 
 ## Pros and Cons
 
-### Main CircleCI strength
+### Pros:
 
-**Simple UI**(user interface) CircleCI is recognized for its user-friendly interface for managing builds/jobs. Its single-page web app is clean and easy to understand
-**High-quality customer support.** StackShare’s community members highlight CircleCI’s speedy support: They respond to requests within 12 hours.
-CircleCI runs **all types of software tests** including web, mobile, and container environments.
-**Caching of requirements installation and third-party dependencies.** Instead of installing the environments, CircleCI can take data from multiple projects using the granular check-out-key options.
-**No need for manual debugging.** CircleCI has debugging feature Debug via SSH, but Jenkins users have to debug manually by clicking on jobs.
+- **Generous free plans** for open source projects easy to set up plenty of features plenty of customization runs quick
+
+- **Simple UI**(user interface) CircleCI is recognized for its user-friendly interface for managing builds/jobs. Its single-page web app is clean and easy to understand
+
+- **High-quality customer support.** StackShare’s community members highlight CircleCI’s speedy support: They respond to requests within 12 hours.
+
+- CircleCI runs **all types of software tests** including web, mobile, and container environments.
+
+- **Caching of requirements installation and third-party dependencies.** Instead of installing the environments, CircleCI can take data from multiple projects using the granular check-out-key options.
+
+- **No need for manual debugging.** CircleCI has debugging feature Debug via SSH, but Jenkins users have to debug manually by clicking on jobs.
+
+- ability to **local** setup CircleCi
+
+### Cons:
+- Config file ```.circleci/config.yml``` tends to get **too long** 
+
+- **High price** for private repositories and large projects
+
+- You can put **only one** language image in a container
+
+- CircleCI in the free version **only** supports Ubuntu. To use MacOS or Windows you will have to pay
+
+- The local version has a **limitation** compared to the cloud CircleCi
+
+- **Shared containers** between all projects
 
 ## Executors and Images
 
