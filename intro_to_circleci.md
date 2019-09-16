@@ -30,17 +30,17 @@
 - ability to **local** setup CircleCi
 
 ### Cons:
-- config file ```.circleci/config.yml``` tends to get too long 
+- Config file ```.circleci/config.yml``` tends to get **too long** 
 
-- High price for private repositories and large projects
+- **High price** for private repositories and large projects
 
-- You can put only **one** language image in a container
+- You can put **only one** language image in a container
 
-- CircleCI in the free version only supports Ubuntu. To use MacOS or Windows you will have to pay
+- CircleCI in the free version **only** supports Ubuntu. To use MacOS or Windows you will have to pay
 
-- the local version has a limitation compared to the cloud CircleCi
+- The local version has a **limitation** compared to the cloud CircleCi
 
-- shared containers between all projects
+- **Shared containers** between all projects
 
 ## Executors and Images
 
