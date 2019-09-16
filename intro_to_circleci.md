@@ -74,7 +74,6 @@ Main differences between using Docker and VM:
 | Start time                                 | Instant | 30-60 sec |
 | Clean environment                          | Yes     | Yes       |
 | Custom images                              | Yes     | No        |
-| Build Docker images                        | Yes     | Yes       |
 | Full control over job environment          | No      | Yes       |
 | Full root access                           | No      | Yes       |
 | Run multiple databases                     | Yes     | Yes       |
@@ -85,9 +84,6 @@ Main differences between using Docker and VM:
 | Configurable resources (CPU/RAM)           | Yes     | No        |
 
 The docker key defines Docker as the underlying technology to run your jobs using Docker Containers. 
-Containers are an instance of the Docker Image you specify. The first image listed in your configuration is 
-the primary container image in which all steps run. All other containers run in a common network and every exposed 
-port will be available on localhost from a primary container.
 
 ### Pre-Built CircleCI Docker Images
 
