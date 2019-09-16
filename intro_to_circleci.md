@@ -54,6 +54,10 @@ A CircleCI build consists of a series of steps. Generally, they’re:
 
 - **Shared containers** between all projects
 
+- **Not understandable** UI/UX interface in most cases
+
+- **Strange** system of approvable deploys
+
 ## Executors and Images
 
 ### Overview
