@@ -58,12 +58,12 @@ A CircleCI build consists of a series of steps. Generally, they’re:
 
 ### Overview
 
-CircleCI enables you to run jobs in one of three environments:
+CircleCI enables you to run jobs in one of four environments:
 
 * Within Docker images (docker)
 * Within a Linux virtual machine (VM) image (machine)
 * Within a macOS VM image (macos)
-* Within a Windows OS VM image (macos)
+* Within a Windows VM image
 
 It is possible to specify a different executor type for every job in your `.circleci/config.yml` by specifying the 
 executor type and an appropriate image.
