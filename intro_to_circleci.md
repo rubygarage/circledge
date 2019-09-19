@@ -303,6 +303,48 @@ Caching is one of the most effective ways to make jobs faster on CircleCI by reu
 
 A good example is package dependency managers such as Yarn, Bundler, or Pip. With dependencies restored from a cache, commands like yarn install will only need to download new dependencies, if any, and not redownload everything on every build.
 
+Automatic dependency caching is not available in CircleCI 2.0, so it is important to plan and implement your caching strategy to get the best performance. Manual configuration in 2.0 enables more advanced strategies and finer control.
+
+**Note:** The Docker images used for CircleCI 2.0 job runs are automatically cached on the server infrastructure where possible.
+
+Sometimes for large projects it’s beneficial to cache the git repository Here is an example of source caching:
+```
+    steps:
+      - restore_cache:
+          keys:
+            - source-v1-{{ .Branch }}-{{ .Revision }}
+            - source-v1-{{ .Branch }}-
+            - source-v1-
+
+      - checkout
+
+      - save_cache:
+          key: source-v1-{{ .Branch }}-{{ .Revision }}
+          paths:
+            - ".git"
+```
+### Cache Expiration
+ The caches created via the save_cache step are stored for up to **30 days**.
+
+### Clearing Cache
+For example, you may want to clear the cache in the following scenarios by incrementing the cache key name:
+
+- Dependency manager version change, for example, you change npm from 4 to 5
+- Language version change, for example, you change ruby 2.3 to 2.4
+- Dependencies are removed from your project
+
+In order to clear the cache, you need to change the name of the key under which it is stored for example:
+```
+  - v1-npm-deps-{{ checksum "package-lock.json" }} 
+```
+  change to
+```
+  - v2-npm-deps-{{ checksum "package-lock.json" }}
+```
+### Cache Size
+
+We recommend keeping cache sizes **under 500MB**. This is our upper limit for corruption checks because above this limit check times would be excessively long. You can view the cache size from the CircleCI Jobs page within the `restore_cache` step. 
+
 ### Keys and Templates
 
 A cache stores a hierarchy of files under a key.
