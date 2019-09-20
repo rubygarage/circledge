@@ -58,12 +58,12 @@ A CircleCI build consists of a series of steps. Generally, they’re:
 
 ### Overview
 
-CircleCI enables you to run jobs in one of three environments:
+CircleCI enables you to run jobs in one of four environments:
 
 * Within Docker images (docker)
 * Within a Linux virtual machine (VM) image (machine)
 * Within a macOS VM image (macos)
-* Within a Windows OS VM image (macos)
+* Within a Windows VM image
 
 It is possible to specify a different executor type for every job in your `.circleci/config.yml` by specifying the 
 executor type and an appropriate image.
@@ -74,7 +74,6 @@ Main differences between using Docker and VM:
 | Start time                                 | Instant | 30-60 sec |
 | Clean environment                          | Yes     | Yes       |
 | Custom images                              | Yes     | No        |
-| Build Docker images                        | Yes     | Yes       |
 | Full control over job environment          | No      | Yes       |
 | Full root access                           | No      | Yes       |
 | Run multiple databases                     | Yes     | Yes       |
@@ -84,10 +83,9 @@ Main differences between using Docker and VM:
 | Use docker compose with volumes            | No      | Yes       |
 | Configurable resources (CPU/RAM)           | Yes     | No        |
 
-The docker key defines Docker as the underlying technology to run your jobs using Docker Containers. 
-Containers are an instance of the Docker Image you specify. The first image listed in your configuration is 
-the primary container image in which all steps run. All other containers run in a common network and every exposed 
-port will be available on localhost from a primary container.
+The docker key defines Docker as the underlying technology to run your jobs using Docker Containers.
+
+Containers are an instance of the Docker Image you specify. The first image listed in your configuration is the primary container image in which all steps run. All other containers run in a common network and every exposed port will be available on localhost from a primary container.
 
 ### Pre-Built CircleCI Docker Images
 
