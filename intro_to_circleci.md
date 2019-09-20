@@ -297,6 +297,8 @@ absent or wrong variables.
 * Variables, that needed only on CircleCI or secret variables, should be stored in CircleCi 
 Project Setting page.
 
+* We recommend keeping cache sizes **under 500MB**. This is our upper limit for corruption checks because above this limit check times would be excessively long. You can view the cache size from the CircleCI Jobs page within the `restore_cache` step. 
+
 ## Caching
 
 Caching is one of the most effective ways to make jobs faster on CircleCI by reusing the data from expensive fetch operations from previous jobs.
@@ -307,7 +309,7 @@ Automatic dependency caching is not available in CircleCI 2.0, so it is importan
 
 **Note:** The Docker images used for CircleCI 2.0 job runs are automatically cached on the server infrastructure where possible.
 
-Sometimes for large projects it’s beneficial to cache the git repository Here is an example of source caching:
+Sometimes for large projects it’s beneficial to cache the git repository. Here is an example of source caching:
 ```
     steps:
       - restore_cache:
@@ -341,9 +343,6 @@ In order to clear the cache, you need to change the name of the key under which 
 ```
   - v2-npm-deps-{{ checksum "package-lock.json" }}
 ```
-### Cache Size
-
-We recommend keeping cache sizes **under 500MB**. This is our upper limit for corruption checks because above this limit check times would be excessively long. You can view the cache size from the CircleCI Jobs page within the `restore_cache` step. 
 
 ### Keys and Templates
 
@@ -413,40 +412,6 @@ steps:
   - run: bundle exec rspec
 ```
 
-### Partial Dependency Caching Strategies
-```
-steps:
-  - restore_cache:
-      keys:
-        - gem-cache-{{ arch }}-{{ .Branch }}-{{ checksum "Gemfile.lock" }}
-        - gem-cache-{{ arch }}-{{ .Branch }}
-        - gem-cache
-```
-In the above example, if a dependency tree is partially restored by the second or third cache keys, Bundler will incorrectly install on top of the outdated dependency tree.
-Instead of a cascading fallback, a more stable option is a single version-prefixed cache key.
-```
-steps:
-  - restore_cache:
-      keys:
-        - v1-gem-cache-{{ arch }}-{{ .Branch }}-{{ checksum "Gemfile.lock" }}
-```
-Partial Cache Restoration can be used for Bundler, but it is required to add a step that cleans Bundler before restoring dependencies from cache.
-A config for partial gems caching looks like this:
-```
-steps:
-  - restore_cache:
-      keys:
-        # when lock file changes, use increasingly general patterns to restore cache
-        - v1-gem-cache-{{ arch }}-{{ .Branch }}-{{ checksum "Gemfile.lock" }}
-        - v1-gem-cache-{{ arch }}-{{ .Branch }}-
-        - v1-gem-cache-{{ arch }}-
-  # clean Bunlder
-  - run: bundle install && bundle clean
-  - save_cache:
-      paths:
-        - ~/.bundle
-      key: v1-gem-cache-{{ arch }}-{{ .Branch }}-{{ checksum "Gemfile.lock" }}
-```
 ### Best Practices
 - If your source code changes frequently, use fewer, more specific keys. This produces a more granular source cache that will update more often as the current branch and git revision change. E.g. `source-v1-{{ .Branch }}-{{ .Revision }}`
 - Use checksum for lockfiles (for example, `Gemfile.lock` or `yarn.lock`)
