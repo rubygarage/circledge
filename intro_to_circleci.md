@@ -156,6 +156,33 @@ jobs:
       - image: redis
 ```
 
+### Best Practices
+
+* Do **not** use `latest`. Use the most specific image possible. This makes your builds more deterministic by preventing an upstream image from introducing unintended changes to your image. 
+There are two ways to make an image more specific:
+
+  * Use a tag to pin an image to a version or operating system (OS).
+  for example:
+    ```yml
+    #instead of 
+    - image: circleci/ruby
+
+    #use
+    - image: circleci/ruby:2.6.1-node
+    ```
+  * Use a Docker image ID to pin an image to a fixed version. for example:
+    ```yml
+    - image: circleci/ruby@sha256:df1808e61a9c32d0ec110960fed213ab2339451ca88941e9be01a03adc98396e
+    ```
+
+  ####  Finding an Image ID
+  1. In the CircleCI application, go to a past build that used the image.
+  2. On the `Test Summary` tab, click the `Spin up environment` step.
+  3. In the log output, locate the digest for the image.
+  4. Add the image ID to the image name as shown below.
+
+
+
 
 ## Environment variables
 
