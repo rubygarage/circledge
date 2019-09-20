@@ -239,35 +239,6 @@ is only possible by deleting and recreating it.
 ### Setting an Environment Variable in a Context
 Creating a context allows you to share environment variables across multiple projects. To set an environment variables in a context, see the [Contexts documentation](https://circleci.com/docs/2.0/contexts/).
 
-### Injecting Environment Variables with the API
-
-Build parameters are environment variables, therefore their names have to meet the following restrictions:
-
-* They must contain only ASCII letters, digits and the underscore character.
-* They must not begin with a number.
-* They must contain at least one character.
-
-Aside from the usual constraints for environment variables there are no restrictions on the values themselves and 
-are treated as simple strings. The order that build parameters are loaded in is not guaranteed so avoid interpolating 
-one build parameter into another. It is best practice to set build parameters as an unordered list of independent 
-environment variables.
-
-```bash
-curl \
-  --header "Content-Type: application/json" \
-  --data '{"build_parameters": {"param1": "value1", "param2": 500}}' \
-  --request POST \
-  https://circleci.com/api/v1.1/project/github/circleci/mongofinil/tree/master?circle-token=$CIRCLE_TOKEN
-```
-Your build will see the environment variables:
-```
-export param1="value1"
-export param2=500
-```
-**Build parameters** are exported as environment variables inside each job’s containers and can be used by scripts/programs and commands in `config.yml`. The injected environment variables may be used to influence the steps that are run during the job. It is important to note that injected environment variables will not override values defined in `config.yml` nor in the project settings.
-
-In the above example, `$CIRCLE_TOKEN` is a personal API token.
-
 ### Built-in Environment Variables
   The **built-in** environment variables are exported in each build and can be used for more complex testing or deployment.  
   
