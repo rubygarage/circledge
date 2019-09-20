@@ -83,7 +83,9 @@ Main differences between using Docker and VM:
 | Use docker compose with volumes            | No      | Yes       |
 | Configurable resources (CPU/RAM)           | Yes     | No        |
 
-The docker key defines Docker as the underlying technology to run your jobs using Docker Containers. 
+The docker key defines Docker as the underlying technology to run your jobs using Docker Containers.
+
+Containers are an instance of the Docker Image you specify. The first image listed in your configuration is the primary container image in which all steps run. All other containers run in a common network and every exposed port will be available on localhost from a primary container.
 
 ### Pre-Built CircleCI Docker Images
 
