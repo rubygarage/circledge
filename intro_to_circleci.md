@@ -28,8 +28,6 @@ A CircleCI build consists of a series of steps. Generally, they’re:
 
 - **Generous free plans** for open source projects easy to set up plenty of features plenty of customization runs quick
 
-- **Simple UI**(user interface) CircleCI is recognized for its user-friendly interface for managing builds/jobs. Its single-page web app is clean and easy to understand
-
 - **High-quality customer support.** StackShare’s community members highlight CircleCI’s speedy support: They respond to requests within 12 hours.
 
 - CircleCI runs **all types of software tests** including web, mobile, and container environments.
