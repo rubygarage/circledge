@@ -618,33 +618,34 @@ Each built-in (default) step type is described below.
 
   - ```fingerprints``` - list of fingerprints corresponding to the keys to be added (default: all keys added)
 
-There is also an ability to set up custom reusable steps as commands:
+There is also an ability to set up custom reusable steps as references:
 
 ```yml
-version: 2.1
+references:
+  restore_bundle_cache: &restore_bundle_cache
+    restore_cache:
+      keys:
+        - repo-bundle-v2-{{ checksum ".ruby-version" }}-{{ checksum "Gemfile.lock" }}
 
-commands:
-  ruby_garage:
-    description: "Reuse me"
-    parameters:
-      content:
-        type: string
-        default: "Hello World!"
-    steps:
-      - run: echo << parameters.name >>
+  bundle_install: &bundle_install
+    run:
+      name: Installing gems
+      command: bundle install --path vendor/bundle
+
+  save_bundle_cache: &save_bundle_cache
+    save_cache:
+      key: repo-bundle-v2-{{ checksum ".ruby-version" }}-{{ checksum "Gemfile.lock" }}
+      paths:
+        - vendor/bundle
 ```
 
 ```yml
-version: 2.1
-
-jobs:
-  ruby_job:
-    steps:
-      - ruby_garage:
-          content: "Hello Ruby Garage!"
+steps:
+  - <<: *restore_bundle_cache
+  - <<: *bundle_install
+  - <<: *save_bundle_cache
 ```
-
-```description``` and ```parameters``` are optional, ```steps``` is required key.
+In example above were used YAML anchors & aliases.
 
 ## Jobs
 A run is comprised of one or more named jobs. Jobs are specified in the ```jobs``` map, see [Sample 2.0 config.yml](https://circleci.com/docs/2.0/sample-config/) for two examples of a job map. The name of the job is the key in the map, and the value is a map describing the job.
