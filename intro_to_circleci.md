@@ -485,22 +485,20 @@ Caches are isolated based on GitHub Repo for PRs. CircleCI uses the GitHub repos
 Currently there is no pre-population of caches because this optimization hasn’t made it to the top of the priority list yet.
 
 ## Steps
-The steps setting in a job should be a list of single key/value pairs, the key of which indicates the step type. The value may be either a configuration map or a string (depending on what that type of step requires). For example, using a map:
+
+Steps are a collection of executable commands which are run during a job. The steps setting in a job should be a list of single key/value pairs, the key of which indicates the step type. The value may be either a configuration map or a string (depending on what that type of step requires).
+
+Example, using a map:
 ``` yml
 jobs:
   build:
-    working_directory: ~/canary-python
-    environment:
-      FOO: bar
     steps:
       - run:
           name: Running tests
           command: make test
 ```
 
-Here ```run``` is a step type. The ```name``` attribute is used by the UI for display purposes. The ```command``` attribute is specific for ```run``` step and defines command to execute.
-
-Some steps may implement a shorthand semantic. For example, ```run``` may be also be called like this:
+Example, using a string (name here will have the same value as command):
 
 ```yml
 jobs:
@@ -508,7 +506,117 @@ jobs:
     steps:
       - run: make test
 ```
-In its short form, the run step allows us to directly specify which command to execute as a string value. In this case step itself provides default suitable values for other attributes (name here will have the same value as command, for example).
+
+Another shorthand, which is possible for some steps, is to simply use the step name as a string instead of a key/value pair:
+
+```yml
+jobs:
+  build:
+    steps:
+      - checkout
+```
+
+Each built-in (default) step type is described below.
+
+- **```run```**
+
+  Used for invoking all command-line programs. Each run declaration represents a new shell. It has several attributes:
+    - ```command``` - command to execute.
+      It’s possible to specify a multi-line ```command```:
+
+        ```yml
+        - run:
+            command: |
+              echo Running test
+              mkdir -p /tmp/test-results
+              make test
+        ```
+
+    - ```name``` - title of the step to be shown in UI
+    - ```shell``` - shell to use for execution command
+    - ```environment``` - additional environmental variables, locally scoped to command
+    - ```background``` - configures commands to run in the background (default: false)
+
+      The following example shows the config for running the X virtual framebuffer in the background  which is commonly required to run Selenium tests:
+      ```yml
+      - run:
+          name: Running X virtual framebuffer
+          command: Xvfb :99 -screen 0 1280x1024x24
+          background: true
+      ```
+
+    - ```when``` - specify when to enable or disable the step. Takes the following values: ```always```, ```on_success```, ```on_fail``` (default: ```on_success```)
+
+    - ```no_output_timeout``` - elapsed time the command can run without output (default: 10 minutes)
+    - ```working_directory``` - in which directory to run this step (default: working_directory of the job)
+
+- **```when```** (requires version: 2.1)
+
+  A conditional step consists of a step with the key ```when``` or ```unless```. The purpose of the ```when``` step is customizing commands and job configuration to run on custom conditions (determined at config-compile time) that are checked before a workflow runs. Under the ```when``` key are the subkeys:
+    - ```condition``` - a parameter value
+    - ```steps``` - a list of steps to execute when the condition is true
+
+    ```yml
+    jobs:
+      steps:
+        - when:
+            condition: <<parameters.custom_checkout>>
+            steps:
+              - run: echo "my custom checkout"
+        - unless:
+            condition: <<parameters.custom_checkout>>
+            steps:
+              - checkout
+    ```
+
+- **```checkout```**
+
+  Special step used to check out source code to the configured ```path``` (defaults to the ```working_directory```). The reason this is a special step is because it is more of a helper function designed to make checking out code easy for you. If ```path``` already exists and is
+  a git repo - step will not clone whole repo, instead will pull origin, otherwise the step will fail.
+
+- **```setup_remote_docker```**
+
+  Creates a remote Docker environment configured to execute Docker commands.
+
+- **```save_cache```**
+
+- **```restore_cache```**
+
+- **```deploy```**
+
+  Special step for deploying artifacts. ```deploy``` step behaves and uses the same configuration map and semantics as ```run``` step. Jobs may have more than one ```deploy``` step.
+
+- **```store_artifacts```**
+
+  Step to store artifacts (for example logs, binaries, etc) to be available in the web app or through the API. Subkeys:
+
+    - ```path``` - directory in the primary container to save as job artifacts
+    - ```destination``` - prefix added to the artifact paths in the artifacts API (default: the directory of the file specified in ```path```)
+
+- **```store_test_results```**
+
+  Special step used to upload and store test results for a build. Test results are visible on the CircleCI web application, under each build’s “Test Summary” section. Subkey:
+
+  - ```path``` - path (absolute, or relative to your ```working_directory```) to directory containing subdirectories of JUnit XML or Cucumber JSON test metadata files
+
+- **```persist_to_workspace```**
+
+  Special step used to persist a temporary file to be used by another job in the workflow. Workspaces are stored for up to 30 days after being created. Subkeys:
+
+  - ```root``` - either an absolute path or a path relative to ```working_directory```
+  - ```paths``` - glob identifying file(s), or a non-glob path to a directory to add to the shared workspace. Interpreted as relative to the workspace root
+
+- **```attach_workspace```**
+
+  Special step used to attach the workflow’s workspace to the current container. The full contents of the workspace are downloaded and copied into the directory the workspace is being attached at. Subkey:
+
+  - ```at``` - directory to attach the workspace to
+
+- **```add_ssh_keys```**
+
+  Special step that adds SSH keys from a project’s settings to a container. Also configures SSH to use these keys. Subkey:
+
+  - ```fingerprints``` - list of fingerprints corresponding to the keys to be added (default: all keys added)
 
 ## Jobs
 A run is comprised of one or more named jobs. Jobs are specified in the ```jobs``` map, see [Sample 2.0 config.yml](https://circleci.com/docs/2.0/sample-config/) for two examples of a job map. The name of the job is the key in the map, and the value is a map describing the job.
