@@ -618,6 +618,34 @@ Each built-in (default) step type is described below.
 
   - ```fingerprints``` - list of fingerprints corresponding to the keys to be added (default: all keys added)
 
+There is also an ability to set up custom reusable steps as commands:
+
+```yml
+version: 2.1
+
+commands:
+  ruby_garage:
+    description: "Reuse me"
+    parameters:
+      content:
+        type: string
+        default: "Hello World!"
+    steps:
+      - run: echo << parameters.name >>
+```
+
+```yml
+version: 2.1
+
+jobs:
+  ruby_job:
+    steps:
+      - ruby_garage:
+          content: "Hello Ruby Garage!"
+```
+
+```description``` and ```parameters``` are optional, ```steps``` is required key.
+
 ## Jobs
 A run is comprised of one or more named jobs. Jobs are specified in the ```jobs``` map, see [Sample 2.0 config.yml](https://circleci.com/docs/2.0/sample-config/) for two examples of a job map. The name of the job is the key in the map, and the value is a map describing the job.
 
