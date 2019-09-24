@@ -553,7 +553,29 @@ workflows:
       - build
       - test
 ```
-See the [Sample Parallel Workflow config](https://github.com/CircleCI-Public/circleci-demo-workflows/blob/parallel-jobs/.circleci/config.yml) for a full example.
+Parallel Workflow config example: 
+
+```yml
+jobs:
+  lintering:
+    steps:
+      # lintering steps in one container
+      
+  run_specs:
+    parallelism: 2
+    steps:
+      # test steps in parallel containers
+
+workflows:
+  version: 2
+  build:
+    jobs:
+      - lintering
+      - run_specs:
+          requires:
+            - lintering
+
+```
 
 
 
