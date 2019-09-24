@@ -500,9 +500,14 @@ jobs:
 In its short form, the run step allows us to directly specify which command to execute as a string value. In this case step itself provides default suitable values for other attributes (name here will have the same value as command, for example).
 
 ## Jobs
+
+**Job** is a collection of Steps. All of the steps in the job are executed in a single unit which consumes a CircleCI container from your plan while it’s running.
+
 A run is comprised of one or more named jobs. Jobs are specified in the ```jobs``` map, see [Sample 2.0 config.yml](https://circleci.com/docs/2.0/sample-config/) for two examples of a job map. The name of the job is the key in the map, and the value is a map describing the job.
 
 If you are using [Workflows](https://circleci.com/docs/2.0/workflows/), jobs must have a name that is unique within the ```.circleci/config.yml``` file.
+
+![ci](images/workflow_diagram.png)
 
 If you are **not** using workflows, the jobs map must contain a job named ```build```. This ```build``` job is the default entry-point for a run that is triggered by a push to your VCS provider. It is possible to then specify additional jobs and run them using the CircleCI API.
 
