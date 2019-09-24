@@ -434,22 +434,8 @@ jobs:
 ## Project configurations
 CircleCI provides Project and Org settings with encrypted storage in the CircleCI app.
 
-### Project Settings Page
-![ci](images/circleci_settings.png)
-
 ### Overview
-To support the open source community, projects that are public on GitHub or Bitbucket receive three free build containers, for a total of four containers. Multiple build containers allow you to build a single pull request (PR) faster with parallelism, or build multiple PRs at once.
-
-These additional containers are automatically enabled, as long as the project is public and running on Linux. If you do not want to use the additional containers or do not want your CircleCI project to be public, you can change this setting. In the **Advanced Settings** of your project, set the **Free and Open Source** option to Off.
-
-**Note:** If you are building an open source project on macOS, contact billing@circleci.com to enable these additional containers.
-
-### Security
-While open source can be a liberating practice, take care not to liberate sensitive information.
-
-- If your repository is public, your CircleCI project and its build logs are also public. Pay attention to the information you choose to print.
-
-- Environment variables set in the CircleCI application are hidden from the public, these variables will not be shared in [forked PRs](https://circleci.com/docs/2.0/oss/#pass-secrets-to-builds-from-forked-pull-requests) unless explicitly enabled.
+To support the open source community, projects that are public on GitHub or Bitbucket receive three free build containers, for a total of four containers.
 
 ### Private Environment Variables
 Many projects require API tokens, SSH keys, or passwords. Private environment variables allow you to safely store secrets, even if your project is public. For more information, see the [Environment Variables](https://circleci.com/docs/2.0/env-vars/#setting-an-environment-variable-in-a-project) document.
@@ -459,19 +445,10 @@ By default, CircleCI builds every commit from every branch. This behavior may be
 
 **Note:** Even if this option is enabled, CircleCI will still build all commits from your project’s default branch.
 
-### Build Pull Requests From Forked Repositories
-Many open source projects accept PRs from forked repositories. Building these PRs is an effective way to catch bugs before manually reviewing changes.
+### Auto-cancel redundant builds
+With the exception of your default branch, we will automatically cancel any queued or running builds on a branch when a newer build is triggered on that same branch. Scheduled workflows and re-runs are not auto-canceled.
 
-By default, CircleCI does not build PRs from forked repositories. To change this setting, go to the **Advanced Settings** of your project and set the **Build forked pull requests** option to On.
-
-### Caching
-Caches are isolated based on GitHub Repo for PRs. CircleCI uses the GitHub repository-id of the originator of the fork PR to identify the cache.
-
-- PRs from the same fork repo will share a cache (this includes, as previously stated, that PRs in the master repo share a cache with master).
-
-- Two PRs in different Fork Repos will have different caches.
-
-Currently there is no pre-population of caches because this optimization hasn’t made it to the top of the priority list yet.
+Pipelines must be enabled in order to use this feature.
 
 ## Steps
 The steps setting in a job should be a list of single key/value pairs, the key of which indicates the step type. The value may be either a configuration map or a string (depending on what that type of step requires). For example, using a map:
