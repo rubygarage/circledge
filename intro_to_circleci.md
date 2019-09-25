@@ -589,6 +589,31 @@ workflows:
 In the CircleCi have a different plans for accounts.If you don’t have enough machine power (CPU, memory) you can configure them in the tab `setting -> plan overview` and upgrade them to **PERFORMANCE**.
 But they are **not** free.
 
+for change resource plan user **resource_class**. example:
+```yml
+jobs:
+  build:
+    docker:
+      - image: buildpack-deps:trusty
+    environment:
+      FOO: bar
+    parallelism: 3
+    resource_class: large
+    steps:
+      - run: make test
+      - run: make
+```
+
+avalible resource classes for performance plan:
+
+|**Class**| **vCPUs** | **RAM** |
+| --- | --- | --- |
+| small | 1 | 2gb |
+| medium (default) | 2 | 4gb|
+| medium+ | 3 | 6gb |	
+| large | 4 | 8gb |	
+| xlarge | 8 | 16gb |	
+
 Different plan`s price you can see [here](https://circleci.com/pricing/usage/)
 
 If you have many projects, as well as many developers who push their code into different branches. Increase productivity with optional containers. Price for The price for additional containers can be viewed [here](https://circleci.com/pricing/).
