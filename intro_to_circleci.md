@@ -537,12 +537,39 @@ Each built-in (default) step type is described below.
     - ```environment``` - additional environmental variables, locally scoped to command
     - ```background``` - configures commands to run in the background (default: false)
 
-      The following example shows the config for running the X virtual framebuffer in the background  which is commonly required to run Selenium tests:
+      The following example shows the config for running feature tests. Here frontend/backend servers start and wait in the background till tests will be launched:
+
       ```yml
-      - run:
-          name: Running X virtual framebuffer
-          command: Xvfb :99 -screen 0 1280x1024x24
-          background: true
+      jobs:
+        cypress:
+          steps:
+            - checkout
+            - run:
+                name: Cloning backend repository
+                command: git clone -b develop git@github.com:rubygarage/backend.git
+            - run:
+                name: Installing gems
+                command: bundle install --path vendor/bundle
+            - run:
+                name: Creating database
+                command: bundle exec rails db:create
+            - run:
+                name: Starting backend server
+                command: bundle exec rails s
+                background: true
+            - run:
+                name: Build frontend server
+                command: yarn build
+            - run:
+                name: Starting frontend server
+                command: yarn start
+                background: true
+            - run:
+                name: Waiting for frontend server
+                command: yarn wait-on http://localhost:4000/login -t 20000
+            - run:
+                name: Running cypress tests
+                command: yarn cypress run
       ```
 
     - ```when``` - specify when to enable or disable the step. Takes the following values: ```always```, ```on_success```, ```on_fail``` (default: ```on_success```)
@@ -557,16 +584,31 @@ Each built-in (default) step type is described below.
     - ```steps``` - a list of steps to execute when the condition is true
 
     ```yml
-    jobs:
-      steps:
-        - when:
-            condition: <<parameters.custom_checkout>>
-            steps:
-              - run: echo "my custom checkout"
-        - unless:
-            condition: <<parameters.custom_checkout>>
-            steps:
-              - checkout
+    version: 2.1
+    jobs: # conditional steps may also be defined in `commands:`
+      myjob:
+        parameters:
+          preinstall-foo:
+            type: boolean
+            default: false
+        machine: true
+        steps:
+          - run: echo "preinstall is << parameters.preinstall-foo >>"
+          - when:
+              condition: << parameters.preinstall-foo >>
+              steps:
+                - run: echo "preinstall"
+          - unless:
+              condition: << parameters.preinstall-foo >>
+              steps:
+                - run: echo "don't preinstall"
+    workflows:
+      workflow:
+        jobs:
+          - myjob:
+              preinstall-foo: false
+          - myjob:
+              preinstall-foo: true
     ```
 
 - **```checkout```**
@@ -588,7 +630,7 @@ Each built-in (default) step type is described below.
 
 - **```store_artifacts```**
 
-  Step to store artifacts (for example logs, binaries, etc) to be available in the web app or through the API. Subkeys:
+  Step to store artifacts (for example logs, binaries, failed feature tests screenshots etc) to be available in the web app or through the API. Subkeys:
 
     - ```path``` - directory in the primary container to save as job artifacts
     - ```destination``` - prefix added to the artifact paths in the artifacts API (default: the directory of the file specified in ```path```)
@@ -618,7 +660,8 @@ Each built-in (default) step type is described below.
 
   - ```fingerprints``` - list of fingerprints corresponding to the keys to be added (default: all keys added)
 
-There is also an ability to set up custom reusable steps as references:
+### Best Practices
+Often steps may repeating. What could be done to follow DRY principle is using YAML anchors & aliases. For example:
 
 ```yml
 references:
@@ -645,7 +688,6 @@ steps:
   - <<: *bundle_install
   - <<: *save_bundle_cache
 ```
-In example above were used YAML anchors & aliases.
 
 ## Jobs
 A run is comprised of one or more named jobs. Jobs are specified in the ```jobs``` map, see [Sample 2.0 config.yml](https://circleci.com/docs/2.0/sample-config/) for two examples of a job map. The name of the job is the key in the map, and the value is a map describing the job.
