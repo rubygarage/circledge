@@ -586,8 +586,8 @@ workflows:
 ```
 ## Plan Overview
 
-In the CircleCi have a different plans for accounts.If you don’t have enough machine power (CPU, memory) you can configure them in the tab `setting -> plan overview` and upgrade them to **PERFORMANCE**.
-But they are **not** free.
+There are different plans for accounts in CircleCI. If you need more machine power (CPU, memory) you can upgrade your plan to **PERFORMANCE** in the `settings -> plan overview` tab.
+But they is **not** free.
 
 for change resource plan user **resource_class**. example:
 ```yml
@@ -616,6 +616,6 @@ avalible resource classes for performance plan:
 
 Different plan`s price you can see [here](https://circleci.com/pricing/usage/)
 
-If you have many projects, as well as many developers who push their code into different branches. Increase productivity with optional containers. Price for The price for additional containers can be viewed [here](https://circleci.com/pricing/).
+If you have many projects, as well as many developers who push their code into different branches. Increase productivity with optional containers. The price for additional containers can be viewed [here](https://circleci.com/pricing/).
 
 
