@@ -4,7 +4,7 @@
 
 3. [Orbs + Sample of Orb](3.md)
 
-4. [Local setup](4.md)
+4. [Local setup](local_setup.md)
 
 5. [Integrations ](5.md)
 
