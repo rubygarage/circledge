@@ -14,4 +14,4 @@ To SSH into your job:
 
 The build VM will remain available for an SSH connection for 10 minutes after the build finishes running. After you SSH into the build, the connection will remain open for two hours.
 
-[Here](https://circleci.com/blog/state-management-for-flutter-apps-with-mobx/) you can find detailed example of debugging with SSH.
+[Here](https://circleci.com/blog/debugging-ci-cd-pipelines-with-ssh-access/) you can find detailed example of debugging with SSH.
