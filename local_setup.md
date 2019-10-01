@@ -69,16 +69,16 @@ The CLI tool does not support:
 
 ## Uninstallation
 
-> Linux:
+Linux:
 
-  Remove the ```circleci``` executable from ```usr/local/bin```
+Remove the ```circleci``` executable from ```usr/local/bin```
 
-> Mac:
-  ```
-  brew uninstall circleci
-  ```
+Mac:
+```
+brew uninstall circleci
+```
 
-> Snap package:
-  ```
-  sudo snap remove circleci
-  ```
+Snap package:
+```
+sudo snap remove circleci
+```
