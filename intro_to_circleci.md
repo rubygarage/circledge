@@ -611,7 +611,7 @@ workflows:
 ## Docker Layer Caching (DLC)
 **`$` Premium Feature Notice: Docker Layer Caching**
 
-We now offer Docker Layer Caching on CircleCI 2.0 for an additional fee.
+You can use Docker Layer Caching on CircleCI 2.0 for an additional fee.
 
 Docker Layer Caching  is a great feature to use if building Docker images is a regular part of your CI/CD process. DLC will save image layers created within your jobs, rather than impact the actual container used to run your job.
 
