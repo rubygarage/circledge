@@ -585,6 +585,30 @@ workflows:
             - lintering
 ```
 ## Plan Overview
+Reasons for changing the plan:
+
+- long queues for tests
+- long test time
+
+You can solve these problems in two ways:
+
+1) Purchase of additional containers (each additional container costs $ 50).<br> 
+    pros: 
+      - **Unlimited** minutes of use, users and the number of projects 
+
+    cons:
+      - **No** autoscaling
+      - **No** access to use `resource_class`   
+
+2) Transition to a **Performance plan** <br>
+    pros: 
+      - autoscaling
+      - access to use `resource_class`
+
+    cons:
+      - **High** price (15$ for each 25000 used creedits, 15$ for each user in the account)
+
+
 
 There are different plans for accounts in CircleCI. If you need more machine power (CPU, memory) you can upgrade your plan to **PERFORMANCE** in the `settings -> plan overview` tab.
 But they is **not** free.
@@ -606,13 +630,29 @@ jobs:
 
 avalible resource classes for performance plan:
 
-|**Class**| **vCPUs** | **RAM** |
-| --- | --- | --- |
-| small | 1 | 2gb |
-| medium (default) | 2 | 4gb|
-| medium+ | 3 | 6gb |	
-| large | 4 | 8gb |	
-| xlarge | 8 | 16gb |	
+**Linux:**
+
+|**Class**| **vCPUs** | **RAM** | **Credit/Min** |
+| --- | --- | --- | --- |
+| small | 1 | 2gb | 5 |
+| medium (default) | 2 | 4gb| 10 |
+| medium+ | 3 | 6gb |	15 |
+| large | 4 | 8gb |	20 |
+| xlarge | 8 | 16gb |	40 |
+
+**MacOS:**
+
+|**Class**| **vCPUs** | **RAM** | **Credit/Min** |
+| --- | --- | --- | --- |
+| medium (default)| 4 | 8gb | 50 |
+| large | 8 | 16gb| 100 |
+
+**Windows:**
+
+|**Class**| **vCPUs** | **RAM** | **Credit/Min** |
+| --- | --- | --- | --- |
+| medium | 4 | 15gb | 40 |
+
 
 Different plan`s price you can see [here](https://circleci.com/pricing/usage/)
 
