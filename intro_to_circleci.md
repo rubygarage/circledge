@@ -435,7 +435,7 @@ jobs:
 CircleCI provides Project and Org settings with encrypted storage in the CircleCI app.
 
 ### Overview
-To support the open source community, projects that are public on GitHub or Bitbucket receive three free build containers, for a total of four containers.
+To support the open source community, projects that are public on GitHub or Bitbucket receive three free build containers, for a total of four containers. Only **one** container is available for private repositories
 
 ### Private Environment Variables
 Many projects require API tokens, SSH keys, or passwords. Private environment variables allow you to safely store secrets, even if your project is public. For more information, see the [Environment Variables](https://circleci.com/docs/2.0/env-vars/#setting-an-environment-variable-in-a-project) document.
@@ -449,6 +449,13 @@ By default, CircleCI builds every commit from every branch. This behavior may be
 With the exception of your default branch, any queued or running builds on a branch will be automatically cancel when a newer build is triggered on that same branch. Scheduled workflows and re-runs are not auto-canceled.
 
 Pipelines must be enabled in order to use this feature.
+
+### Recommended configurations:
+- [x] Auto-cancel redundant builds
+- [ ] Only build pull requests   
+- [x] GitHub Status updates
+- [x] Enable pipelines
+  
 
 ## Steps
 The steps setting in a job should be a list of single key/value pairs, the key of which indicates the step type. The value may be either a configuration map or a string (depending on what that type of step requires). For example, using a map:
