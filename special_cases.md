@@ -32,4 +32,4 @@ The `cron` key sets trigger time. It is defined using POSIX `crontab` syntax.
 
 `branches` have subkeys `only` and `ignore` that give you an ability to choose which branch should have a schedule trigger created for it.
 
-Example above executes builds when you push changes to a version control system and also every night on specified branches. You can use `nightly` workflow only in case you need to reduce load on available containers.
+Example above executes builds when you push changes to a version control system and also every night on specified branches. You can use `nightly` workflow without any additional workflows, in this case there will be only 1 build execution per day.
