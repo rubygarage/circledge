@@ -8,11 +8,9 @@ It can be useful when condionally running jobs or using it with github actions f
 
 With CircleCI API you can trigger `build` job manually. To make it you have to do several steps:
 
-- go to project's Settings -> Permissions -> API Permissions -> click Create Token button
+- go to user's Settings -> Personal API Tokens -> click Create New Token button
 
   ![ci](images/api_token.png)
-
-- choose scope 'All', write Token Label, then click 'Add Token'
 
 - use generated token in `curl` command:
   ```
