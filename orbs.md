@@ -119,36 +119,9 @@ orbs:
 ### Authoring Your Own Orb
 If you find that there are no existing orbs that meet your needs, you may author your own orb to meet your specific environment or configuration requirements by using the [CircleCI CLI](https://circleci.com/docs/2.0/local-cli/#overview) as shown in the circleci orb help output below. 
 
-## Publishing Orb
+## Creating a CircleCI Orb
 
 ![ci](images/orbs_block_schema.png)
-
-### Step 1 - Set Up the CircleCI CLI
-Although it is possible to CI/CD orb publishing using the `orbs-tool` orb, the most direct and iterable way to build, publish, and test orbs is by using our CLI. Follow the steps below to install and then configure the CircleCI CLI.
-
-- [Install the CircleCI CLI.](https://circleci.com/docs/2.0/orb-author-cli/#install-the-cli-for-the-first-time)
-- [Update the CLI.](https://circleci.com/docs/2.0/orb-author-cli/#update-the-cli)
-- [Configure the CLI.](https://circleci.com/docs/2.0/orb-author-cli/#configure-the-circleci-cli)
-
-### Step 2 - Verify You Installed the CLI Correctly
-Once you have configured the CircleCI CLI, verify you installed the CLI correctly and the CLI is updated and configured properly before beginning to work with orbs
-
-### Step 3 - Bump Version Property to Orbs-Compatible 2.1
-After validating your build configuration, bump the version property to 2.1 so it is compatible for use with orbs.
-
-### Step 4 - Create a New Orb Using Inline Template
-Using inline orbs are the easiest way to get started with orbs because you can reference them from your existing configuration. Although not required for orb authoring, using inline orbs can simplify the process and is a reasonable approach to authoring orbs quickly and easily
-
-### Step 5 - Design Your Orb
-Depending on whether you use an inline template or author your orb independent of this inline template, you will want to add elements (Jobs, Commands, and Executors) to your orb.
-
-### Step 6 - Validate your Orb
-When you have finished authoring your orb, simply run the `validate` command from your CLI. CircleCI provides several different tools to validate your orb, including the `circleci/orb-tools` orb.
-
-### Step 7 - Publish Your Orb
-The final step in the orb publishing process is for you to simply publish your orb using the `orb-tools/publish` CLI command in the `circleci/orb-tools` orb. Note that dev orb versions make it possible to publish multiple versions of an orb name (dev orbs are mutable).
-
-## Creating a CircleCI Orb
 
 ### CircleCI Settings
 In the CircleCI app Settings page for your project, pipelines must be enabled (default is to be ON for all new projects). The organization owner must also opt-in to use of uncertified orbs in your organization under the Settings tab on the Security page of the CircleCI app.

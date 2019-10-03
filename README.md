@@ -2,7 +2,7 @@
 
 2. [Introduction to CircleCi](intro_to_circleci.md)
 
-3. [Orbs + Sample of Orb](3.md)
+3. [Orbs + Sample of Orb](orbs.md)
 
 4. [Local setup](4.md)
 
