@@ -12,4 +12,4 @@
 
 7. [Basic configuration + Sample application (Rails API Application, React App)](7.md)
 
-8. [Special Cases + examples](8.md)
+8. [Special Cases + examples](special_cases.md)
