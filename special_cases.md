@@ -24,7 +24,7 @@ There is an opportunity to control the quality of your code with a help of Circl
       command: bundle exec rubocop
   ```
 
-  While it is simple to use each linter one by one, there are some drawbacks. At-first, you can't manage linters output on CI. At-second, some linters doesn't raise an exception, so step can be marked as 'success'. At-third, you can't manage which code to lint, the linter will proceed all project.
+  While it is simple to use each linter one by one, there are some drawbacks. At-first, you can't manage linters output on CI. At-second, some linters doesn't raise an exception, so step can be marked as 'success'. At-third, you can't manage which code to lint, the linter will proceed all project. And lastly, the first linter in a chain that returns an error will stop the execution of the job.
 
   But you can place `.sh` files with some script in `bin` directory, and then execute latter during CI build running:
   ```
