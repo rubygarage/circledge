@@ -7,11 +7,13 @@ There is an opportunity to control the quality of your code with a help of Circl
 
 - ### with linter aggregator ([overcommit](https://github.com/sds/overcommit), inquisition, etc.)
 
-  This approach might be interesting for those who starts new project or who have small project, because enabling linters with this aggregators might return you to much issues and errors, so it will be hard to maintain all this staff.
+  This approach might be interesting for those who starts new project or who have small project, because enabling linters with this aggregators might return you to much issues and errors on a big project, so it will be hard to maintain all this staff.
+
+  `overcommit` provides an ability to use your custom scripts. Thus, it is possible to lint code with linter that doesn't supported by `overcommit`. The example of basic overcommit configuration, as well as scripts for `active_record_doctor`, `lol_dba`, `traceroute` and `bundle-leak` placed [here](https://gist.github.com/D3N/1318e9890c95142475b8c6f665283fb1).
 
 - ### with aggregator for Github mentions ([pronto](https://github.com/prontolabs/pronto))
 
-  It can be useful to choose pronto when you have old huge project, because pronto can lint newly added code ignoring old one. Thus you can handle such project lintering with pronto.
+  It can be useful to choose `pronto` when you have old huge project, because `pronto` can lint newly added code ignoring old one. Thus you can handle such project lintering with `pronto`.
 
 - ### with run of each linter
 
