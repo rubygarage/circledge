@@ -446,13 +446,13 @@ By default, CircleCI builds every commit from every branch. This behavior may be
 **Note:** Even if this option is enabled, CircleCI will still build all commits from your project’s default branch.
 
 ### Auto-cancel redundant builds
-With the exception of your default branch, any queued or running builds on a branch will be automatically cancel when a newer build is triggered on that same branch. Scheduled workflows and re-runs are not auto-canceled.
+automatically closes the build if there is a **newer**.
 
 Pipelines must be enabled in order to use this feature.
 
 ### Recommended configurations:
 - [x] Auto-cancel redundant builds
-- [ ] Only build pull requests   
+- [x] Only build pull requests   
 - [x] GitHub Status updates
 - [x] Enable pipelines
   
