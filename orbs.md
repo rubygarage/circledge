@@ -26,32 +26,16 @@ Orbs consist of the following elements:
 
 You can read about each of this features [here](version_2_1.md)
 
-### Namespaces
-Namespaces are used to organize a set of orbs. Each namespace has a unique and immutable name within the registry, and each orb in a namespace has a unique name. For example, the circleci/rails orb may coexist in the registry with an orb called username/rails because they are in separate namespaces.
-
-**Note:** Namespaces are owned by organizations. Organizations are, by default, limited to claiming only one namespace. 
-
-### Semantic Versioning in Orbs
-Orbs are published with the standard 3-number semantic versioning system:
-
-- major
-- minor
-- patch
-
 ## Using CircleCI Orbs
 
-If you have chosen to use CircleCI orbs in your workflows and jobs, there are several different ways that you use orbs. You may choose to either import an existing orb (CircleCI and partner-certified orbs) from the CircleCI Orb Registry, or author your own orb for your specific workflow. Each of these approaches is described below.
+If you have chosen to use CircleCI orbs in your workflows and jobs, there are several different ways that you use orbs. You may choose to either import an existing orb (CircleCI and partner-certified orbs) from the [CircleCI Orb Registry](https://circleci.com/orbs/registry/), or author your own orb for your specific workflow. Each of these approaches is described below.
 
 ### Importing an Existing and Partner Orb
 To import an existing orb, perform the steps listed below.
 
-1) Add a single line to to your version 2.1 `.circleci/config.yml` file for each orb, for example:
-```yml
-version: 2.1
-```
-**Note:** If your project was added to CircleCI prior to 2.1, you must enable “pipelines” to use the orbs key.
+1) Check version in your config `.circleci/config.yml` must be `2.1` or more and you must enable “pipelines” to use the orbs key.
 
-2) Add the `orbs` stanza below your version, invoking the orb. For example:
+2) Add the `orbs` below your version. For example:
 ```yml
 version: 2.1
 
@@ -60,18 +44,38 @@ orbs:
   heroku: circleci/heroku@0.0.1
 ```
 
-### Authoring Your Own Orb
-If you find that there are no existing orbs that meet your needs, you may author your own orb to meet your specific environment or configuration requirements by using the [CircleCI CLI](https://circleci.com/docs/2.0/local-cli/#overview) as shown in the circleci orb help output below. 
+### Sample of using orbs:
+
+Before using the orb, you need to read the documentation for use which can be found on the main page of the orb
+
+example of usage: 
+
+```yml
+version: 2.1
+
+orbs:
+  hello-build: circleci/hello-build@0.0.9
+
+workflows:
+  build:
+    jobs:
+      - hello-build/hello-build
+```
 
 ## Creating a CircleCI Orb
 
 ![ci](images/orbs_block_schema.png)
 
 ### CircleCI Settings
-In the CircleCI app Settings page for your project, pipelines must be enabled (default is to be ON for all new projects). The organization owner must also opt-in to use of uncertified orbs in your organization under the Settings tab on the Security page of the CircleCI app.
+
+- In the CircleCI app Settings page for your project, pipelines must be enabled (default is to be ON for all new projects).
+
+- you need to set your API token in `User settings -> Personal API token`
+
+**Note:** after creating the token, you can see it **only once**.
 
 ### Setup circleci CLI
-The CircleCI platform enables you to write orbs using the CircleCI CLI. If you choose to work with the CLI, the process of writing orbs will be more efficient because you will be able to use existing CircleCI CLI tools and commands.
+to create orbs you need to setup the CircleCI CLI. 
 
 How to **setup** circleci CLI you can see [**here**](https://github.com/rubygarage/circledge/blob/develop/local_setup.md)
 
@@ -107,7 +111,7 @@ Hello, <your name>.
 
 ### Change settings for organization to use 3-rd part orbs
 
-You need to go into the **UI settings** of your organization and allow the use of not certified orbs
+You need to go into the **UI settings** of your organization and allow the use of **not** certified orbs
 
 ### Create namespace 
 
@@ -129,7 +133,7 @@ circleci orb create <namespace>/<orb>
 
 sample of orb:
 
-```
+```yml
 version: 2.1
 commands:
   say_hello:
