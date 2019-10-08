@@ -4,19 +4,9 @@
 ## 5. Lintering
 
 There is an opportunity to control the quality of your code with a help of CircleCI using linters. You can configure CircleCI with one or several types of lintering:
-
-- ### with linter aggregator ([overcommit](https://github.com/sds/overcommit), inquisition, etc.)
-
-  This approach might be interesting for those who starts new project or who have small project, because enabling linters with this aggregators might return you to much issues and errors on a big project, so it will be hard to maintain all this staff.
-
-  `overcommit` provides an ability to use your custom scripts. Thus, it is possible to lint code with linter that doesn't supported by `overcommit`. The example of basic overcommit configuration, as well as scripts for `active_record_doctor`, `lol_dba`, `traceroute` and `bundle-leak` placed [here](https://gist.github.com/D3N/1318e9890c95142475b8c6f665283fb1).
-
-- ### with aggregator for Github mentions ([pronto](https://github.com/prontolabs/pronto))
-
-  It can be useful to choose `pronto` when you have old huge project, because `pronto` can lint newly added code ignoring old one. Thus you can handle such project lintering with `pronto`.
-
+- ### with linter aggregator (<a href="#overcommit">overcommit</a>, inquisition, etc.)
+- ### with aggregator for Github mentions (<a href="#pronto">pronto</a>)
 - ### with run of each linter
-
   You can also run each linter individually. It may be done with simple `run` step, for example:
   ```
   - run:
@@ -30,7 +20,6 @@ There is an opportunity to control the quality of your code with a help of Circl
   ```
   - run: bash bin/rubocop.sh
   ```
-
   `rubocop.sh` file example:
   #### Collect differences between your brach and base branch
   ```
@@ -79,3 +68,28 @@ There is an opportunity to control the quality of your code with a help of Circl
     exit 1
   fi
   ```
+
+<div id="overcommit"></div>
+
+### 5a. [overcommit](https://github.com/sds/overcommit)
+
+`overcommit` is a flexible tool. In case you want to use `overcommit` you have to:
+  - install gem `overcommit`
+  - install every lintering gem that will be enabled in `overcommit` config file, such as `traceroute` etc.
+  - create `overcommit.yml` file, the example of `overcommit` configuration, as well as scripts for `lol_dba` and `traceroute` you can find [here](https://gist.github.com/D3N/1318e9890c95142475b8c6f665283fb1).
+  - create step for running `overcomit` in your CircleCI config file, for example:
+  ```
+  - run:
+      name: Run overcommit
+      command: |
+        bundle exec overcommit -s
+        bundle exec overcommit --sign pre-commit
+        SKIP=AuthorEmail,AuthorName bundle exec overcommit -r
+  ```
+
+<div id="pronto"></div>
+
+### 5b. [pronto](https://github.com/prontolabs/pronto)
+
+It can be useful to choose `pronto` when you have old huge project, because `pronto` can lint newly added code ignoring old one. Thus you can handle such project lintering with `pronto`.
+
