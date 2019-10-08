@@ -1,0 +1,81 @@
+version: 2.1
+
+executors:
+  default:
+    working_directory: ~/repo
+    docker:
+      - image: circleci/node
+
+caches:
+  - &yarn_cache online-consulting-frontend-v1{{ checksum "yarn.lock" }}
+
+commands:
+  restore_yarn_cache:
+    steps:
+      restore_cache:
+        keys:
+          - *yarn_cache
+
+  yarn_install:
+    steps:
+      - run:
+          name: Installing packages
+          command: yarn install
+
+  save_yarn_cache:
+    steps:
+      save_cache:
+        name: Save Yarn Package Cache
+        key: *yarn_cache
+        paths:
+          - ~/.cache
+
+  yarn_lint:
+    steps: 
+      - run: 
+          name: yarn lint
+          command: yarn lint
+
+  run_tests:
+    steps: 
+      - run:
+          name: Running tests
+          command: yarn test:circle
+
+  store_artifacts:
+    steps:
+      store_artifacts:
+          name: Saving Jest coverage
+          path: ~/online-consulting-frontend/coverage/lcov-report
+          destination: /jest-coverage
+
+jobs:
+  linters:
+    executor: default
+
+    steps:
+      - checkout
+      - restore_yarn_cache
+      - yarn_install
+      - save_yarn_cache
+      - yarn_lint 
+
+  tests:
+    executor: default
+
+    steps:
+      - checkout
+      - restore_yarn_cache
+      - yarn_install
+      - save_yarn_cache
+      - run_tests
+      - store_artifacts
+
+workflows:
+  version: 2.1
+  build:
+    jobs:
+      - linters
+      - tests:
+          requires:
+            - linters
