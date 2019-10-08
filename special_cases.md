@@ -33,12 +33,18 @@ With CircleCI API you can trigger `build` job manually. To make it you have to d
 
   `:your-token` - API token created before
 
+In case you have not `build` job in your config file, you will see an error.
+
 ### `workflows` triggering
 
-Triggering `workflows` is in preview mode now. Later you can run workflow with command:
+You can trigger `workflows` with command:
 
 ```
 curl -X POST https://circleci.com/api/v1.1/project/:vcs-type/:user-organization/:project-name/build?circle-token=:your-token
 ```
 
-You will be able to specify the branch to build as a parameter.
+The command above will trigger workflows for default branch. You can also specify which branch to trigger with parameter `branch`:
+
+```
+curl -X POST --header “Content-Type:application/json” --data '{"branch":":your-branch"}' https://circleci.com/api/v1.1/project/:vcs-type/:user-organization/:project-name/build?circle-token=:your-token
+```
