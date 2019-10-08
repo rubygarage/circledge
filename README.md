@@ -13,3 +13,5 @@
 7. [Basic configuration + Sample application (Rails API Application, React App)](7.md)
 
 8. [Special Cases + examples](special_cases.md)
+
+9. [Features of Version 2.1](version_2_1.md)
