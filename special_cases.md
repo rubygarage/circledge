@@ -2,9 +2,9 @@
 
 ## Daily builds
 
-It can be inefficient and expensive to run a workflow for every commit for every branch. Instead, you can schedule a workflow to run at a certain time for specific branches. This will disable commits from triggering jobs on those branches. To achieve such behaviour you can use `triggers` key that specifies which triggers will cause the workflow to be executed. Default behavior is to trigger the workflow when pushing to a branch.
+It can be inefficient and expensive to run a workflow for every commit for every branch. Instead, you can schedule a workflow to run at a certain time for specific branches. This will disable commits from triggering jobs on those branches.
 
-A workflow may have a `schedule` indicating it runs at a certain time, for example a nightly build that runs every day at 00:00 :
+A `triggers` key should be added for indicating a scheduled build. Currently `triggers` have only one subkey - `schedule` which defines a certain time, for example a nightly build that runs every day at 00:00 :
 
 ```
 workflows:
@@ -25,6 +25,8 @@ workflows:
     jobs:
       - coverage
 ```
+
+`commit` and `nightly` are workflow names.
 
 The `cron` key sets trigger time. It is defined using POSIX `crontab` syntax.
 
