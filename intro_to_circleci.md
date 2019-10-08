@@ -608,10 +608,7 @@ You can solve these problems in two ways:
     cons:
       - **High** price (15$ for each 25000 used creedits, 15$ for each user in the account)
 
-
-
-There are different plans for accounts in CircleCI. If you need more machine power (CPU, memory) you can upgrade your plan to **PERFORMANCE** in the `settings -> plan overview` tab.
-But they is **not** free.
+`resource_class` allows you to use different machine instances for change CPU/memory
 
 for change resource plan user **resource_class**. example:
 ```yml
@@ -628,34 +625,5 @@ jobs:
       - run: make
 ```
 
-avalible resource classes for performance plan:
-
-**Linux:**
-
-|**Class**| **vCPUs** | **RAM** | **Credit/Min** |
-| --- | --- | --- | --- |
-| small | 1 | 2gb | 5 |
-| medium (default) | 2 | 4gb| 10 |
-| medium+ | 3 | 6gb |	15 |
-| large | 4 | 8gb |	20 |
-| xlarge | 8 | 16gb |	40 |
-
-**MacOS:**
-
-|**Class**| **vCPUs** | **RAM** | **Credit/Min** |
-| --- | --- | --- | --- |
-| medium (default)| 4 | 8gb | 50 |
-| large | 8 | 16gb| 100 |
-
-**Windows:**
-
-|**Class**| **vCPUs** | **RAM** | **Credit/Min** |
-| --- | --- | --- | --- |
-| medium | 4 | 15gb | 40 |
-
-
-Different plan`s price you can see [here](https://circleci.com/pricing/usage/)
-
-If you have many projects, as well as many developers who push their code into different branches. Increase productivity with optional containers. The price for additional containers can be viewed [here](https://circleci.com/pricing/).
-
+avalible resource classes for performance plan you can see [here](https://circleci.com/pricing/usage/)
 
