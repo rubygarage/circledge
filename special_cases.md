@@ -1,4 +1,3 @@
-
 # Special Cases + examples
 
 ## 5. Lintering
@@ -91,5 +90,50 @@ There is an opportunity to control the quality of your code with a help of Circl
 
 ### 5b. [pronto](https://github.com/prontolabs/pronto)
 
-It can be useful to choose `pronto` when you have old huge project, because `pronto` can lint newly added code ignoring old one. Thus you can handle such project lintering with `pronto`.
+It can be useful to choose `pronto` when you have big old project, because `pronto` can lint newly added code ignoring old one. Besides lintering, `pronto` has one interesting feature: it can leave comments with issue text produced by some linter on your Github pull requests.
 
+  - To install `pronto` you have to:
+    - add to your `Gemfile`:
+      ```
+      gem 'pronto'
+      ```
+
+    - as a minimal set of linters we advise to add also:
+      ```
+      gem 'pronto-brakeman', require: false
+      gem 'pronto-bundler_audit', require: false
+      gem 'pronto-fasterer', require: false
+      gem 'pronto-flay', require: false
+      gem 'pronto-rails_best_practices', require: false
+      gem 'pronto-rails_schema', require: false
+      gem 'pronto-reek', require: false
+      gem 'pronto-rubocop', require: false
+      ```
+
+  - To use `pronto` locally run command:
+    ```
+    pronto run
+    ```
+    If your code has some issues, you will have console output from every `pronto-linter` added to `Gemfile`.
+
+  - To use pronto with CircleCI and Github you have to:
+    - generate Github personal access token:\
+      go to your Github account user's `Settings -> Developer settings -> Personal access tokens -> Generete new token`
+
+    - add this Github token to CircleCI project:\
+      go to CircleCI project's `Settings -> Environment Variables -> Add Variable`,\
+      Name - `PRONTO_GITHUB_ACCESS_TOKEN`\
+      Value - insert your Github token
+
+    - turn on "Only build pull requests":\
+      go to CircleCI project's `Settings -> Advanced Settings -> Only build pull requests -> On`
+
+    - add to your `.circleci/config.yml` such step:
+      ```
+      - run:
+          name: Run lintering with pronto
+          command: |
+            PRONTO_PULL_REQUEST_ID=`echo $CIRCLE_PULL_REQUEST | grep -o -E "[0-9]+$"`
+            bundle exec pronto run -f github_status github_pr -c origin/development || true
+      ```
+    In case of project's code issues, you should see pull request comments under each problematic string of code. Each comment will be equal to linter's issue text.
