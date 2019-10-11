@@ -446,7 +446,7 @@ By default, CircleCI builds every commit from every branch. This behavior may be
 **Note:** Even if this option is enabled, CircleCI will still build all commits from your project’s default branch.
 
 ### Auto-cancel redundant builds
-automatically closes the build if there is a **newer**.
+Automatically closes all **old** build for some branch/PR if there is a **newer** one
 
 Pipelines must be enabled in order to use this feature.
 
@@ -455,11 +455,11 @@ Pipelines must be enabled in order to use this feature.
 - [x] Only build pull requests   
 - [x] GitHub Status updates
 - [x] Enable pipelines
-  
 
 ## Steps
 
 Steps are a collection of executable commands which are run during a job. The steps setting in a job should be a list of single key/value pairs, the key of which indicates the step type. The value may be either a configuration map or a string (depending on what that type of step requires).
+
 
 Example, using a map:
 ``` yml
