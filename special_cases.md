@@ -12,7 +12,7 @@ Example of config to setup Heroku deploy:
 ```yml
 version: 2.1
 orbs:
-  heroku: circleci/heroku@1.0.0
+  heroku: circleci/heroku@0.0.8
 workflows:
   heroku_deploy:
     jobs:
