@@ -446,7 +446,7 @@ By default, CircleCI builds every commit from every branch. This behavior may be
 **Note:** Even if this option is enabled, CircleCI will still build all commits from your project’s default branch.
 
 ### Auto-cancel redundant builds
-automatically closes the build if there is a **newer**.
+Automatically closes all **old** build for some branch/PR if there is a **newer** one
 
 Pipelines must be enabled in order to use this feature.
 
