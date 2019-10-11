@@ -435,6 +435,7 @@ jobs:
 CircleCI provides Project and Org settings with encrypted storage in the CircleCI app.
 
 ### Overview
+
 To support the open source community, projects that are public on GitHub or Bitbucket receive three free build containers, for a total of four containers. Only **one** container is available for private repositories
 
 ### Private Environment Variables
@@ -446,6 +447,7 @@ By default, CircleCI builds every commit from every branch. This behavior may be
 **Note:** Even if this option is enabled, CircleCI will still build all commits from your project’s default branch.
 
 ### Auto-cancel redundant builds
+
 Automatically closes all **old** build for some branch/PR if there is a **newer** one
 
 Pipelines must be enabled in order to use this feature.
@@ -459,7 +461,6 @@ Pipelines must be enabled in order to use this feature.
 ## Steps
 
 Steps are a collection of executable commands which are run during a job. The steps setting in a job should be a list of single key/value pairs, the key of which indicates the step type. The value may be either a configuration map or a string (depending on what that type of step requires).
-
 
 Example, using a map:
 ``` yml
@@ -664,7 +665,8 @@ steps:
 
 ## Jobs
 
-**Job** is a collection of Steps. All of the steps in the job are executed in a single unit which consumes a CircleCI container from your plan while it’s running.
+**Job** is a collection of Steps. All of the steps in the job are executed in a single unit which consumes a CircleCI container from your 
+while it’s running.
 
 A run is comprised of one or more named jobs. Jobs are specified in the ```jobs``` map, see [Sample 2.0 config.yml](https://circleci.com/docs/2.0/sample-config/) for two examples of a job map. The name of the job is the key in the map, and the value is a map describing the job.
 
@@ -769,8 +771,52 @@ workflows:
       - run_specs:
           requires:
             - lintering
-
 ```
+## Plan Overview
+Reasons for changing the plan:
+
+- long queues for tests
+- long test time
+
+You can solve these problems in two ways:
+
+1) Purchase of additional containers (each additional container costs 50$).<br> 
+    pros: 
+      - **Unlimited** minutes of use, users and the number of projects 
+
+    cons:
+      - **No** autoscaling
+      - **No** access to use `resource_class`   
+
+2) Transition to a **Performance plan** <br>
+    pros: 
+      - autoscaling
+      - access to use `resource_class`
+
+    cons:
+      - **High** price (15$ for each 25000 used credits, 15$ for each user in the account)
+
+`resource_class` allows you to use different machine instances for change CPU/memory
+
+Use `resource_class` for change resource plan.
+
+Example:
+```yml
+jobs:
+  build:
+    docker:
+      - image: buildpack-deps:trusty
+    environment:
+      FOO: bar
+    parallelism: 3
+    resource_class: large
+    steps:
+      - run: make test
+      - run: make
+```
+
+avalible resource classes for performance plan you can see [here](https://circleci.com/pricing/usage/) 
+
 ## Docker Layer Caching (DLC)
 **`$` Premium Feature Notice: Docker Layer Caching**
 
@@ -797,11 +843,4 @@ jobs:
 ### Examples
 
 you can see how to use docker layer caching [here](https://youtu.be/AL7aBN7Olng)
-
-
-
-
-
-
-
 
