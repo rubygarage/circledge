@@ -2,6 +2,8 @@
 
 ## Approvable Deployment
 
+Manual approvals can be used to enable controls and layers of risk reduction for jobs which require some level of monitoring. It is also the assurance that someone on your team can check and confirm the details of a job before deploying into production.
+
 `workflows` can be configured to wait for manual approval of a job before continuing to the next job. **Anyone** who has push access to the repository can click the Approval button to continue the workflow. For example:
 ```yml
 workflows:
