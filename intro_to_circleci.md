@@ -787,6 +787,36 @@ workflows:
             - lintering
 
 ```
+## Docker Layer Caching (DLC)
+**`$` Premium Feature Notice: Docker Layer Caching**
+
+You can use Docker Layer Caching on CircleCI 2.0 for an additional fee.
+
+Docker Layer Caching is a feature to use if building your own Docker images is a regular part of your CI/CD process. DLC will save image layers created within your jobs, rather than impact the actual container used to run your job. In short, the less your Dockerfiles change from commit to commit, the faster your image-building steps will run.
+
+**Note:** in order to use DLC you need to switch to **Performance Plan** and for each build you will need to pay 200 additional credits
+
+```yml
+version: 2 
+jobs: 
+ build: 
+   docker: 
+     # DLC does nothing here, its caching depends on commonality of the image layers.
+     - image: circleci/node:9.8.0-stretch-browsers 
+   steps: 
+     - checkout 
+     - setup_remote_docker: 
+         docker_layer_caching: true 
+     # DLC will explicitly cache layers here and try to avoid rebuilding.
+     - run: docker build .
+```
+### Examples
+
+you can see how to use docker layer caching [here](https://youtu.be/AL7aBN7Olng)
+
+
+
+
 
 
 
