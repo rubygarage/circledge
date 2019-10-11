@@ -3,70 +3,9 @@
 ## Lintering
 
 There is an opportunity to control the quality of your code with a help of CircleCI using linters. You can configure CircleCI with one or several types of lintering:
-- ### with linter aggregator (<a href="#overcommit">overcommit</a>, inquisition, etc.)
-- ### with aggregator for Github mentions (<a href="#pronto">pronto</a>)
-- ### with run of each linter
-  You can also run each linter individually. It may be done with simple `run` step, for example:
-  ```
-  - run:
-      name: Run rubocop
-      command: bundle exec rubocop
-  ```
-
-  While it is simple to use each linter one by one, there are some drawbacks. At-first, you can't manage linters output on CI. At-second, some linters doesn't raise an exception, so step can be marked as 'success'. At-third, you can't manage which code to lint, the linter will proceed all project. And lastly, the first linter in a chain that returns an error will stop the execution of the job.
-
-  But you can place `.sh` files with some script in `bin` directory, and then execute latter during CI build running:
-  ```
-  - run: bash bin/rubocop.sh
-  ```
-  `rubocop.sh` file example:
-  #### Collect differences between your brach and base branch
-  ```
-  #!/usr/bin/env bash
-
-  BASE_REMOTE=origin
-  BASE_BRANCH=develop
-
-  git fetch $BASE_REMOTE $BASE_BRANCH
-
-  differences_list=()
-  commit_list=`git --no-pager log --no-merges $BASE_REMOTE/$BASE_BRANCH...$CIRCLE_BRANCH | grep -e '^commit' | sed -e "s/^commit \(.\{8\}\).*/\1/"`
-  changed_files_list = `git --no-pager diff $BASE_REMOTE/$BASE_BRANCH...$CIRCLE_BRANCH --name-only`
-
-  for file in $changed_files_list; do
-    for commit in $commit_list; do
-      differences=`git --no-pager blame --follow --show-name -s $file | grep $commit | sed -e "s/^[^ ]* *\([^ ]*\) *\([0-9]*\)*).*$/\1:\2/"`
-      for line in $differences; do
-        differences_list+=("$line")
-      done
-    done
-  done
-  ```
-  #### Collect errors
-  ```
-  error_counts=0
-  error_lines=()
-
-  while read line; do
-    for difference in ${differences_list[@]}; do
-      if [[ "$line" =~ "$difference" ]]; then
-        error_counts=$(($error_counts + 1))
-        error_lines+=("$line")
-        break
-      fi
-    done
-  done < <(bundle exec rubocop --format emacs)
-  ```
-  #### Exit with error message if error counts greater then zero
-  ```
-  if [ $error_counts -ne 0 ]; then
-    echo -e "\033[31m$error_counts Lint Errors\033[0;39m"
-    echo -e "\033[31m-----------------------------------\033[0;39m\n"
-    printf '\033[31m%s\n' "${error_lines[@]}"
-    echo -e "\033[31mPlease resolve them before merging.\033[0;39m"
-    exit 1
-  fi
-  ```
+- #### with linter aggregator (<a href="#overcommit">overcommit</a>, inquisition, etc.)
+- #### with aggregator for Github mentions (<a href="#pronto">pronto</a>)
+- #### with run of each linter separately (for <a href="#rubocop">example</a>)
 
 <div id="overcommit"></div>
 
@@ -98,7 +37,7 @@ It can be useful to choose `pronto` when you have big old project, because `pron
       gem 'pronto'
       ```
 
-    - as a minimal set of linters we advise to add also:
+    - as an optimal set of linters we advise to add also:
       ```
       gem 'pronto-brakeman', require: false
       gem 'pronto-bundler_audit', require: false
@@ -138,6 +77,28 @@ It can be useful to choose `pronto` when you have big old project, because `pron
       ```
     In case of project's code issues, you should see pull request comments under each problematic string of code. Each comment will be equal to linter's issue text.
 
+<div id="rubocop"></div>
+
+### 5c. Using custom separate linter
+
+You can also run each linter individually. It may be done with simple `run` step, for example:
+  ```
+  - run:
+      name: Run rubocop
+      command: bundle exec rubocop
+  ```
+
+  While it is simple to use each linter one by one, there are some drawbacks:
+  - you can't manage linters output on CI
+  - some linters doesn't raise an exception, so step can be marked as 'success'
+  - you can't manage which code to lint, the linter will proceed all project
+  - the first linter in a chain that returns an error will stop the execution of the job.
+
+  But you can place `.sh` files with some script in `bin` directory, and then execute latter during CI build running, so you can handle all issues above:
+  ```
+  - run: bash bin/rubocop.sh
+  ```
+  [Here](https://gist.github.com/D3N/c66ff89e7cc9123a14f4e06dbdc87a9c) you can find `rubocop.sh` file example.
 
 ## Daily builds
 
