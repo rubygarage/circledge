@@ -455,25 +455,23 @@ Pipelines must be enabled in order to use this feature.
 - [x] Only build pull requests   
 - [x] GitHub Status updates
 - [x] Enable pipelines
-  
 
 ## Steps
-The steps setting in a job should be a list of single key/value pairs, the key of which indicates the step type. The value may be either a configuration map or a string (depending on what that type of step requires). For example, using a map:
+
+Steps are a collection of executable commands which are run during a job. The steps setting in a job should be a list of single key/value pairs, the key of which indicates the step type. The value may be either a configuration map or a string (depending on what that type of step requires).
+
+
+Example, using a map:
 ``` yml
 jobs:
   build:
-    working_directory: ~/canary-python
-    environment:
-      FOO: bar
     steps:
       - run:
           name: Running tests
           command: make test
 ```
 
-Here ```run``` is a step type. The ```name``` attribute is used by the UI for display purposes. The ```command``` attribute is specific for ```run``` step and defines command to execute.
-
-Some steps may implement a shorthand semantic. For example, ```run``` may be also be called like this:
+Example, using a string (name here will have the same value as command):
 
 ```yml
 jobs:
@@ -481,7 +479,188 @@ jobs:
     steps:
       - run: make test
 ```
-In its short form, the run step allows us to directly specify which command to execute as a string value. In this case step itself provides default suitable values for other attributes (name here will have the same value as command, for example).
+
+Another shorthand, which is possible for some steps, is to simply use the step name as a string instead of a key/value pair:
+
+```yml
+jobs:
+  build:
+    steps:
+      - checkout
+```
+
+Each built-in (default) step type is described below.
+
+- **```run```**
+
+  Used for invoking all command-line programs. Each run declaration represents a new shell. It has several attributes:
+    - ```command``` - command to execute.
+      It’s possible to specify a multi-line ```command```:
+
+        ```yml
+        - run:
+            command: |
+              echo Running test
+              mkdir -p /tmp/test-results
+              make test
+        ```
+
+    - ```name``` - title of the step to be shown in UI
+    - ```shell``` - shell to use for execution command
+    - ```environment``` - additional environmental variables, locally scoped to command
+    - ```background``` - configures commands to run in the background (default: false)
+
+      The following example shows the config for running feature tests. Here frontend/backend servers start and wait in the background till tests will be launched:
+
+      ```yml
+      jobs:
+        cypress:
+          steps:
+            - checkout
+            - run:
+                name: Cloning backend repository
+                command: git clone -b develop git@github.com:rubygarage/backend.git
+            - run:
+                name: Installing gems
+                command: bundle install --path vendor/bundle
+            - run:
+                name: Creating database
+                command: bundle exec rails db:create
+            - run:
+                name: Starting backend server
+                command: bundle exec rails s
+                background: true
+            - run:
+                name: Build frontend server
+                command: yarn build
+            - run:
+                name: Starting frontend server
+                command: yarn start
+                background: true
+            - run:
+                name: Waiting for frontend server
+                command: yarn wait-on http://localhost:4000/login -t 20000
+            - run:
+                name: Running cypress tests
+                command: yarn cypress run
+      ```
+
+    - ```when``` - specify when to enable or disable the step. Takes the following values: ```always```, ```on_success```, ```on_fail``` (default: ```on_success```)
+
+    - ```no_output_timeout``` - elapsed time the command can run without output (default: 10 minutes)
+    - ```working_directory``` - in which directory to run this step (default: working_directory of the job)
+
+- **```when```** (requires version: 2.1)
+
+  A conditional step consists of a step with the key ```when``` or ```unless```. The purpose of the ```when``` step is customizing commands and job configuration to run on custom conditions (determined at config-compile time) that are checked before a workflow runs. Under the ```when``` key are the subkeys:
+    - ```condition``` - a parameter value
+    - ```steps``` - a list of steps to execute when the condition is true
+
+    ```yml
+    version: 2.1
+    jobs: # conditional steps may also be defined in `commands:`
+      myjob:
+        parameters:
+          preinstall-foo:
+            type: boolean
+            default: false
+        machine: true
+        steps:
+          - run: echo "preinstall is << parameters.preinstall-foo >>"
+          - when:
+              condition: << parameters.preinstall-foo >>
+              steps:
+                - run: echo "preinstall"
+          - unless:
+              condition: << parameters.preinstall-foo >>
+              steps:
+                - run: echo "don't preinstall"
+    workflows:
+      workflow:
+        jobs:
+          - myjob:
+              preinstall-foo: false
+          - myjob:
+              preinstall-foo: true
+    ```
+
+- **```checkout```**
+
+  Special step used to check out source code to the configured ```path``` (defaults to the ```working_directory```). The reason this is a special step is because it is more of a helper function designed to make checking out code easy for you. If ```path``` already exists and is
+  a git repo - step will not clone whole repo, instead will pull origin, otherwise the step will fail.
+
+- **```setup_remote_docker```**
+
+  Creates a remote Docker environment configured to execute Docker commands.
+
+- **```save_cache```**
+
+- **```restore_cache```**
+
+- **```deploy```**
+
+  Special step for deploying artifacts. ```deploy``` step behaves and uses the same configuration map and semantics as ```run``` step. Jobs may have more than one ```deploy``` step.
+
+- **```store_artifacts```**
+
+  Step to store artifacts (for example logs, binaries, failed feature tests screenshots etc) to be available in the web app or through the API. Subkeys:
+
+    - ```path``` - directory in the primary container to save as job artifacts
+    - ```destination``` - prefix added to the artifact paths in the artifacts API (default: the directory of the file specified in ```path```)
+
+- **```store_test_results```**
+
+  Special step used to upload and store test results for a build. Test results are visible on the CircleCI web application, under each build’s “Test Summary” section. Subkey:
+
+  - ```path``` - path (absolute, or relative to your ```working_directory```) to directory containing subdirectories of JUnit XML or Cucumber JSON test metadata files
+
+- **```persist_to_workspace```**
+
+  Special step used to persist a temporary file to be used by another job in the workflow. Workspaces are stored for up to 30 days after being created. Subkeys:
+
+  - ```root``` - either an absolute path or a path relative to ```working_directory```
+  - ```paths``` - glob identifying file(s), or a non-glob path to a directory to add to the shared workspace. Interpreted as relative to the workspace root
+
+- **```attach_workspace```**
+
+  Special step used to attach the workflow’s workspace to the current container. The full contents of the workspace are downloaded and copied into the directory the workspace is being attached at. Subkey:
+
+  - ```at``` - directory to attach the workspace to
+
+- **```add_ssh_keys```**
+
+  Special step that adds SSH keys from a project’s settings to a container. Also configures SSH to use these keys. Subkey:
+
+  - ```fingerprints``` - list of fingerprints corresponding to the keys to be added (default: all keys added)
+
+### Best Practices
+Often steps may repeating. What could be done to follow DRY principle is using YAML anchors & aliases. For example:
+
+```yml
+references:
+  restore_bundle_cache: &restore_bundle_cache
+    restore_cache:
+      keys:
+        - repo-bundle-v2-{{ checksum ".ruby-version" }}-{{ checksum "Gemfile.lock" }}
+
+  bundle_install: &bundle_install
+    run:
+      name: Installing gems
+      command: bundle install --path vendor/bundle
+
+  save_bundle_cache: &save_bundle_cache
+    save_cache:
+      key: repo-bundle-v2-{{ checksum ".ruby-version" }}-{{ checksum "Gemfile.lock" }}
+      paths:
+        - vendor/bundle
+```
+
+```yml
+steps:
+  - <<: *restore_bundle_cache
+  - <<: *bundle_install
+  - <<: *save_bundle_cache
+```
 
 ## Jobs
 
@@ -592,6 +771,36 @@ workflows:
             - lintering
 
 ```
+## Docker Layer Caching (DLC)
+**`$` Premium Feature Notice: Docker Layer Caching**
+
+You can use Docker Layer Caching on CircleCI 2.0 for an additional fee.
+
+Docker Layer Caching is a feature to use if building your own Docker images is a regular part of your CI/CD process. DLC will save image layers created within your jobs, rather than impact the actual container used to run your job. In short, the less your Dockerfiles change from commit to commit, the faster your image-building steps will run.
+
+**Note:** in order to use DLC you need to switch to **Performance Plan** and for each build you will need to pay 200 additional credits
+
+```yml
+version: 2 
+jobs: 
+ build: 
+   docker: 
+     # DLC does nothing here, its caching depends on commonality of the image layers.
+     - image: circleci/node:9.8.0-stretch-browsers 
+   steps: 
+     - checkout 
+     - setup_remote_docker: 
+         docker_layer_caching: true 
+     # DLC will explicitly cache layers here and try to avoid rebuilding.
+     - run: docker build .
+```
+### Examples
+
+you can see how to use docker layer caching [here](https://youtu.be/AL7aBN7Olng)
+
+
+
+
 
 
 
