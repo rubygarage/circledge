@@ -592,7 +592,7 @@ Reasons for changing the plan:
 
 You can solve these problems in two ways:
 
-1) Purchase of additional containers (each additional container costs $ 50).<br> 
+1) Purchase of additional containers (each additional container costs 50$).<br> 
     pros: 
       - **Unlimited** minutes of use, users and the number of projects 
 
@@ -606,11 +606,13 @@ You can solve these problems in two ways:
       - access to use `resource_class`
 
     cons:
-      - **High** price (15$ for each 25000 used creedits, 15$ for each user in the account)
+      - **High** price (15$ for each 25000 used credits, 15$ for each user in the account)
 
 `resource_class` allows you to use different machine instances for change CPU/memory
 
-for change resource plan user **resource_class**. example:
+Use `resource_class` for change resource plan.
+
+Example:
 ```yml
 jobs:
   build:
