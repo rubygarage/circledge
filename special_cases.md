@@ -25,6 +25,8 @@ To use this feature you need:
 ### Important information
 - the key `type: approval` works **only** under the `workflow` key section
 - the `hold` job must be a unique (arbitrary) name not used by any other job
+- "on-hold" jobs do not have an expiration, and stay in such condition until approval or cancel
+- unfortunately there is no way of triggering manual approval via CircleCI API (with `curl`) now
 
 
 ## Lintering
