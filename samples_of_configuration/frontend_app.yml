@@ -6,8 +6,23 @@ executors:
     docker:
       - image: circleci/node
 
+  cypress:
+    working_directory: ~/repo
+    docker:
+      - image: circleci/ruby:2.6.3-node
+        environment:
+          PG_USER: online-consulting-backend
+          RAILS_ENV: test
+
+      - image: circleci/postgres:10-alpine
+        environment:
+          POSTGRES_USER: online-consulting-backend
+          POSTGRES_DB: online-consulting-backend_test
+          POSTGRES_PASSWORD: ""
+
 caches:
-  - &yarn_cache online-consulting-frontend-v1{{ checksum "yarn.lock" }}
+  - &yarn_cache repo-yarn-v1{{ checksum "yarn.lock" }}
+  - &bundle_cache repo-bundle-v1{{ checksum "Gemfile.lock"}}
 
 commands:
   restore_yarn_cache:
@@ -49,6 +64,71 @@ commands:
           path: ~/online-consulting-frontend/coverage/lcov-report
           destination: /jest-coverage
 
+  start_backend_in_background:
+    steps:
+       - run:
+          name: Cloning backend repository
+          command: git clone -b develop git@github.com:username/repo-backend.git ~/repo-backend
+
+      - restore_cache:
+          keys:
+            - *bundle_cache
+
+      - run:
+          name: Installing gems
+          working_directory: ~/repo-backend
+          command: bundle install --path vendor/bundle
+
+      - save_cache:
+          key: *bundle_cache
+          paths:
+            - ~/online-consulting-backend/vendor/bundle
+
+      - run:
+          name: Creating database
+          working_directory: ~/repo-backend
+          command: |
+            bundle exec rails db:create
+            bundle exec rails db:schema:load
+
+      - run:
+          name: Starting backend server
+          working_directory: ~/repo-backend
+          command: bundle exec rails s
+          background: true
+ 
+  start_frontend_server:
+    steps:
+      - run:
+          name: Build frontend server
+          command: |
+            rm -rf pages/stubs
+            yarn build
+
+      - run:
+          name: Starting frontend server
+          command: yarn start
+          background: true
+
+      - run:
+          name: Waiting for frontend server
+          command: yarn wait-on http://localhost:4000/login -t 20000
+
+  run_cypress_test:
+    steps:
+      - run:
+          name: Waiting for frontend server
+          command: yarn wait-on http://localhost:4000/login -t 20000
+
+      - run:
+          name: Running cypress tests
+          command: yarn cypress run --config video=false
+
+      - store_artifacts:
+          name: Saving Cypress screenshots
+          path: ~/online-consulting-frontend/cypress/screenshots
+          destination: /cypress-screenshots
+
 jobs:
   linters:
     executor: default
@@ -70,6 +150,18 @@ jobs:
       - save_yarn_cache
       - run_tests
       - store_artifacts
+  cypress:
+    executor: cypress
+
+    steps:
+      - checkout
+      - restore_yarn_cache
+      - yarn_install
+      - save_yarn_cache
+      - start_backend_in_background
+      - start_frontend_server
+      - run_cypress_test
+
 
 workflows:
   version: 2.1
@@ -79,3 +171,6 @@ workflows:
       - tests:
           requires:
             - linters
+      - cypress:
+          requires:
+            - tests
