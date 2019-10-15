@@ -434,22 +434,9 @@ jobs:
 ## Project configurations
 CircleCI provides Project and Org settings with encrypted storage in the CircleCI app.
 
-### Project Settings Page
-![ci](images/circleci_settings.png)
-
 ### Overview
-To support the open source community, projects that are public on GitHub or Bitbucket receive three free build containers, for a total of four containers. Multiple build containers allow you to build a single pull request (PR) faster with parallelism, or build multiple PRs at once.
 
-These additional containers are automatically enabled, as long as the project is public and running on Linux. If you do not want to use the additional containers or do not want your CircleCI project to be public, you can change this setting. In the **Advanced Settings** of your project, set the **Free and Open Source** option to Off.
-
-**Note:** If you are building an open source project on macOS, contact billing@circleci.com to enable these additional containers.
-
-### Security
-While open source can be a liberating practice, take care not to liberate sensitive information.
-
-- If your repository is public, your CircleCI project and its build logs are also public. Pay attention to the information you choose to print.
-
-- Environment variables set in the CircleCI application are hidden from the public, these variables will not be shared in [forked PRs](https://circleci.com/docs/2.0/oss/#pass-secrets-to-builds-from-forked-pull-requests) unless explicitly enabled.
+To support the open source community, projects that are public on GitHub or Bitbucket receive three free build containers, for a total of four containers. Only **one** container is available for private repositories
 
 ### Private Environment Variables
 Many projects require API tokens, SSH keys, or passwords. Private environment variables allow you to safely store secrets, even if your project is public. For more information, see the [Environment Variables](https://circleci.com/docs/2.0/env-vars/#setting-an-environment-variable-in-a-project) document.
@@ -459,19 +446,17 @@ By default, CircleCI builds every commit from every branch. This behavior may be
 
 **Note:** Even if this option is enabled, CircleCI will still build all commits from your project’s default branch.
 
-### Build Pull Requests From Forked Repositories
-Many open source projects accept PRs from forked repositories. Building these PRs is an effective way to catch bugs before manually reviewing changes.
+### Auto-cancel redundant builds
 
-By default, CircleCI does not build PRs from forked repositories. To change this setting, go to the **Advanced Settings** of your project and set the **Build forked pull requests** option to On.
+Automatically closes all **old** build for some branch/PR if there is a **newer** one
 
-### Caching
-Caches are isolated based on GitHub Repo for PRs. CircleCI uses the GitHub repository-id of the originator of the fork PR to identify the cache.
+Pipelines must be enabled in order to use this feature.
 
-- PRs from the same fork repo will share a cache (this includes, as previously stated, that PRs in the master repo share a cache with master).
-
-- Two PRs in different Fork Repos will have different caches.
-
-Currently there is no pre-population of caches because this optimization hasn’t made it to the top of the priority list yet.
+### Recommended configurations:
+- [x] Auto-cancel redundant builds
+- [x] Only build pull requests   
+- [x] GitHub Status updates
+- [x] Enable pipelines
 
 ## Steps
 
@@ -680,7 +665,8 @@ steps:
 
 ## Jobs
 
-**Job** is a collection of Steps. All of the steps in the job are executed in a single unit which consumes a CircleCI container from your plan while it’s running.
+**Job** is a collection of Steps. All of the steps in the job are executed in a single unit which consumes a CircleCI container from your 
+while it’s running.
 
 A run is comprised of one or more named jobs. Jobs are specified in the ```jobs``` map, see [Sample 2.0 config.yml](https://circleci.com/docs/2.0/sample-config/) for two examples of a job map. The name of the job is the key in the map, and the value is a map describing the job.
 
@@ -785,9 +771,76 @@ workflows:
       - run_specs:
           requires:
             - lintering
+```
+## Plan Overview
+Reasons for changing the plan:
 
+- long queues for tests
+- long test time
+
+You can solve these problems in two ways:
+
+1) Purchase of additional containers (each additional container costs 50$).<br> 
+    pros: 
+      - **Unlimited** minutes of use, users and the number of projects 
+
+    cons:
+      - **No** autoscaling
+      - **No** access to use `resource_class`   
+
+2) Transition to a **Performance plan** <br>
+    pros: 
+      - autoscaling
+      - access to use `resource_class`
+
+    cons:
+      - **High** price (15$ for each 25000 used credits, 15$ for each user in the account)
+
+`resource_class` allows you to use different machine instances for change CPU/memory
+
+Use `resource_class` for change resource plan.
+
+Example:
+```yml
+jobs:
+  build:
+    docker:
+      - image: buildpack-deps:trusty
+    environment:
+      FOO: bar
+    parallelism: 3
+    resource_class: large
+    steps:
+      - run: make test
+      - run: make
 ```
 
+avalible resource classes for performance plan you can see [here](https://circleci.com/pricing/usage/) 
 
+## Docker Layer Caching (DLC)
+**`$` Premium Feature Notice: Docker Layer Caching**
 
+You can use Docker Layer Caching on CircleCI 2.0 for an additional fee.
+
+Docker Layer Caching is a feature to use if building your own Docker images is a regular part of your CI/CD process. DLC will save image layers created within your jobs, rather than impact the actual container used to run your job. In short, the less your Dockerfiles change from commit to commit, the faster your image-building steps will run.
+
+**Note:** in order to use DLC you need to switch to **Performance Plan** and for each build you will need to pay 200 additional credits
+
+```yml
+version: 2 
+jobs: 
+ build: 
+   docker: 
+     # DLC does nothing here, its caching depends on commonality of the image layers.
+     - image: circleci/node:9.8.0-stretch-browsers 
+   steps: 
+     - checkout 
+     - setup_remote_docker: 
+         docker_layer_caching: true 
+     # DLC will explicitly cache layers here and try to avoid rebuilding.
+     - run: docker build .
+```
+### Examples
+
+you can see how to use docker layer caching [here](https://youtu.be/AL7aBN7Olng)
 
