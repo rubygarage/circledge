@@ -70,31 +70,31 @@ workflows:
 
 - In the CircleCI app Settings page for your project, pipelines must be enabled (default is to be ON for all new projects).
 
-- you need to set your API token in `User settings -> Personal API token`
+- You need to set your API token in `User settings -> Personal API token`
 
 **Note:** after creating the token, you can see it **only once**.
 
 ### Setup circleci CLI
-to create orbs you need to setup the CircleCI CLI. 
+To create orbs you need to setup the CircleCI CLI. 
 
 How to **setup** circleci CLI you can see [**here**](https://github.com/rubygarage/circledge/blob/develop/local_setup.md)
 
 ### Configure circleci CLI
 
-run in your console: 
+Run in your console: 
 ```
 circleci setup
 ```
-after running this command you need to set your API token and host (default "https://circleci.com")
+After running this command you need to set your API token and host (default "https://circleci.com")
 
 **Note:** before running this command you need to **create** an API token in the UI
 
-after setup host and API token you can to check your configurated CLI.
+After setup host and API token you can to check your configurated CLI.
 ```
 circleci diagnostic
 ```
 
-output: 
+Output: 
 ```
 ---
 CircleCI CLI Diagnostics
@@ -109,7 +109,7 @@ Ok.
 Hello, <your name>.
 ```
 
-### Change settings for organization to use 3-rd part orbs
+### Change settings for organization to use not certified orbs
 
 You need to go into the **UI settings** of your organization and allow the use of **not** certified orbs
 
@@ -146,14 +146,33 @@ commands:
       - run: echo << parameters.to >>
 ```
 
-after that you need to validate the orb you wrote. To do this, run the command:
+After that you need to validate the orb you wrote. To do this, run the command:
 
 ```
 circleci orb validate <path to your created orb> 
 ```
 
-to use the orb you need to publish it on circleci. Run this command:
+To use the orb you need to publish it on circleci. Run this command:
 
 ```
 circleci orb publish <path> <namespace>/<orb>@<version>
+```
+
+We also created our own simple orb for saving and restoring cache - [kolyanjy/save_and_restore_cache](https://circleci.com/orbs/registry/orb/kolyanjy/save_and_restore_cache).
+
+Example: 
+
+```yml
+version: 2.1
+
+orbs:
+  save_and_restore_cache: kolyanjy/save_and_restore_cache@0.1.3
+
+jobs:
+  lintering:
+    executor: default
+    steps:
+      - checkout
+      - save_and_restore_cache/take-cache:
+          key: 'repo-bundle-v2'
 ```
