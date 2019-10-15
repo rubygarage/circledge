@@ -1,0 +1,150 @@
+version: 2.1
+
+executors:
+  default:
+    working_directory: ~/repo
+    description: The official CircleCI Ruby Docker image
+    docker:
+      - image: circleci/ruby:2.6.1-node
+        environment:
+          RAILS_ENV: test
+      - image: circleci/postgres:11.3-alpine
+        environment:
+          POSTGRES_USER: postgres
+          POSTGRES_PASSWORD: postgres
+          POSTGRES_DB: test_db
+          DATABASE_URL: "postgres://ubuntu@localhost:5432/test_db"
+
+caches: 
+  - &bundle_cache v1-bundle-repo-{{ checksum "Gemfile.lock" }}
+  - &npm_cache v1-npm-repo-{{ checksum "frontend/package-lock.json" }}
+
+
+commands:
+  save_and_restore_bundle:
+    steps:
+      - restore_cache:
+          key: *bundle_cache
+
+      - run:
+          name: Installing gems
+          command: bundle install --path vendor/bundle
+
+      - save_cache:
+          key: *bundle_cache
+          paths:
+            - vendor/bundle
+  create_database:
+    steps:
+      - run:
+          name: Creating database
+          command: |
+            bundle exec rails db:create
+            bundle exec rails db:schema:load
+
+  save_and_restore_npm:
+    steps:
+      - restore_cache:
+          keys:
+            - react-{{ checksum "frontend/package-lock.json" }}
+            - react-
+
+      - run:
+          name: Installing dependencies
+          command: cd frontend && npm install --no-progress
+
+      - save_cache:
+          key: react-{{ checksum "frontend/package-lock.json" }}
+          paths:
+            - frontend/node_modules
+
+  run_rspec:
+    steps:
+      - run:
+          name: RSpec
+          command: |
+            bundle exec rspec --format RspecJunitFormatter \
+                              --out /tmp/test-results/rspec/results.xml \
+                              --format progress \
+                              $(circleci tests glob "spec/**/*_spec.rb" | circleci tests split --split-by=timings)
+
+  run_backend_linters:
+    steps:
+      - run: 
+          name: run rubocop
+          command: bundle exec rubocop
+
+      - run:
+          name: Brakeman
+          command: bundle exec brakeman
+
+      - run: 
+          name: lol_dba
+          command: bundle exec lol_dba db:find_indexes
+
+      - run:
+          name: Bundler audit
+          command: bundle exec bundle-audit check --update
+
+      - run:
+          name: Rails best practices
+          command: bundle exec rails_best_practices
+
+  run_frontend_linters:
+    steps:
+      - run:
+          name: SASS Lint
+          command: cd frontend && sudo npm install -g sass-lint && npm run sasslint
+
+      - run:
+          name: ESLint
+          command: cd frontend && npm run eslint:all
+
+      - store_test_results:
+          path: /tmp/test-results
+
+  run_jest:
+    steps:
+      - run:
+          name: Jest
+          command: |
+            mkdir /tmp/test-results/jest
+            cd frontend && npm run test:ci
+          environment:
+            TEST_REPORT_PATH: /tmp/test-results/jest
+            TEST_REPORT_FILENAME: results.xml
+
+      - store_artifacts:
+          path: frontend/coverage/lcov-report
+          destination: /jest-coverage
+
+jobs:
+  lintering:
+    executor: default
+
+    steps:
+      - checkout
+      - save_and_restore_bundle
+      - run_backend_linters
+      - save_and_restore_npm
+      - run_frontend_linters
+
+  tests:
+    executor: default
+
+    steps:
+      - checkout
+      - save_and_restore_bundle
+      - run_rspec
+      - save_and_restore_npm
+      - run_jest
+
+workflows:
+  version: 2.1
+
+  build:
+    jobs:
+      - lintering
+      - tests:
+          requires:
+            - lintering
