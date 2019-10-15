@@ -1,5 +1,34 @@
 # Special Cases + examples
 
+## Approvable Deployment
+
+Manual approvals can be used to enable controls and layers of risk reduction for jobs which require some level of monitoring. It is also the assurance that someone on your team can check and confirm the details of a job before deploying into production.
+
+`workflows` can be configured to wait for manual approval of a job before continuing to the next job. **Anyone** who has push access to the repository can click the Approval button to continue the workflow. For example:
+```yml
+workflows:
+  version: 2
+  approvable-deployment:
+    jobs:
+      - hold:
+          type: approval
+      - deploy:
+          requires:
+            - hold
+```
+
+To use this feature you need:
+- add the key `type: approval` to a job-predecessor, thus, job that should be manually approved must be after job with the `type: approval` key
+- add `requires` key with name of the approval-job to all jobs that should run after approval
+- to make approval move to CircleCI workflows section -> click `workflow` that "ON HOLD" -> click on job with "pause" sign -> click Approve
+
+### Important information
+- the key `type: approval` works **only** under the `workflow` key section
+- the `hold` job must be a unique (arbitrary) name not used by any other job
+- "on-hold" jobs do not have an expiration, and stay in such condition until approval or cancel
+- unfortunately there is no way of triggering manual approval via CircleCI API (with `curl`) now
+
+
 ## Lintering
 
 There is an opportunity to control the quality of your code with a help of CircleCI using linters. You can configure CircleCI with one or several types of lintering:
