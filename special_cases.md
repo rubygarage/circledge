@@ -120,6 +120,7 @@ jobs:
     steps:
       - defaults
       - run_linters
+      
   run_specs:
     executor: default
     parallelism: 2
@@ -143,9 +144,6 @@ workflows:
           requires:
             - lintering
       - check_coverage:
-          requires:
-            - run_specs
-      - deploy_prod_heroku:
           requires:
             - run_specs
 ```
