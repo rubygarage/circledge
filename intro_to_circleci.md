@@ -772,6 +772,48 @@ workflows:
           requires:
             - lintering
 ```
+## Artifacts
+
+**Artifacts** persist data after a job is completed and may be used for longer-term storage of the outputs of your build process.
+
+You can store artifacts with `store_artifacts`
+
+Currently, `store_artifacts` has two keys:
+- `path` is a path to the file or directory to be uploaded as artifacts.
+- `destination` (Optional) is a prefix added to the artifact paths in the artifacts API. The directory of the file specified in path is used as the default.
+
+Usage example:
+
+```yml
+steps:
+  - run: 
+      name: run specs
+      command: |
+        bundle exec rspec 
+  - store_artifacts:
+      path: ~/repo/coverage
+      destination: coverage
+```
+
+In the example above, we stored the **coverage** after performing tests into **artifacts**
+
+After the completion of the job, you can see the artifacts in the tab `'Artifacts'` :
+
+![ci](images/artifacts.png)
+
+
+### Downloading artifacts by `curl`
+
+To download your artifacts with curl, follow the steps below.
+
+1) [Create a personal API token](https://circleci.com/docs/2.0/managing-api-tokens/#creating-a-personal-api-token) and copy it to a clipboard.
+
+2) In a Terminal window, cd to a directory where you want to store the artifacts.
+
+3) Run the commands below. 
+
+`curl https://circleci.com/api/v1.1/project/:vcs-type/:username/:project/latest/artifacts?circle-token=:your_token`
+
 ## Plan Overview
 Reasons for changing the plan:
 
