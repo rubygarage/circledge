@@ -6,7 +6,7 @@
 
 4. [Local setup](local_setup.md)
 
-5. [Integrations ](5.md)
+5. [Integrations ](integrations.md)
 
 6. [Debugging with SSH](debugging_with_ssh.md)
 
