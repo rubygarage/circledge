@@ -91,9 +91,8 @@ workflows:
 ```
 
 `spec/support/helpers/simplecov_helper.rb`:
+
 ```ruby
-require 'simplecov'
-require 'json'
 class SimpleCovHelper
   def self.report_coverage(base_dir: './coverage_results')
     SimpleCov.start 'rails' do
