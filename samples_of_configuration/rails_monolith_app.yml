@@ -1,0 +1,87 @@
+version: 2.1
+
+executors:
+  default:
+    working_directory: ~/repo
+    description: The official CircleCI Ruby Docker image
+    docker:
+      - image: circleci/ruby:2.6.1-node-browsers # if you use api then you do not need 
+        environment:
+          RAILS_ENV: test
+      - image: circleci/postgres:11.3-alpine
+        environment:
+          POSTGRES_USER: postgres
+          POSTGRES_PASSWORD: postgres
+          POSTGRES_DB: test_db
+          DATABASE_URL: "postgres://ubuntu@localhost:5432/test_db"
+
+caches: 
+  - &bundle_cache v1-repo-{{ checksum "Gemfile.lock" }}
+
+commands:
+  run_linters:
+    description: command to start linters
+    steps:
+      - run: 
+          name: rubocop
+          command: bundle exec rubocop
+      - run: 
+          name: brakeman
+          command: bundle exec brakeman -q
+      - run: 
+          name: lol_dba
+          command: bundle exec lol_dba db:find_indexes
+      - run: 
+          name: rails best prctices
+          command: bundle exec rails_best_practices .
+
+  run_specs:
+    steps:
+      - run: 
+          name: run specs
+          command: |
+            mkdir /tmp/test-results
+            TEST_FILES="$(circleci tests glob "spec/**/*_spec.rb" | circleci tests split --split-by=timings)"
+            bundle exec rspec --format progress \
+                              --out /tmp/test-results/rspec.xml \
+                              --format progress \
+                              $TEST_FILES
+
+  defaults:
+    steps:
+      - checkout
+      - restore_cache:
+          key: *bundle_cache
+      - run: bundle install --path vendor/bundle
+      - save_cache:
+          key: *bundle_cache
+          paths:
+            - vendor/bundle
+      - run:
+          name: Set up DB
+          command: |
+            bundle exec rake db:create
+            bundle exec rake db:migrate
+
+jobs:
+  lintering:
+    executor: default
+    steps:
+      - defaults
+      - run_linters
+  run_specs:
+    executor: default
+    # add 'parallelism' key for run spec in parallel
+    # note: don`t use parallel if your specs last less than 5 minutes
+    steps:
+      - defaults
+      - run_specs
+
+workflows:
+  version: 2.1
+  build:
+    jobs:
+      - lintering
+      - run_specs:
+          requires:
+            - lintering
