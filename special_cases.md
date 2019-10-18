@@ -1,6 +1,8 @@
 # Special Cases
 
 ## Coverage per several threads
+When tests are run in several threads, there is a problem of incorrect display of coverage. To avoid this problem you can use the solution below.
+
 `.circleci/config.yml`:
 ```yml
 version: 2.1
