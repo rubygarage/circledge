@@ -13,7 +13,6 @@ executors:
           POSTGRES_USER: postgres
           POSTGRES_PASSWORD: postgres
           POSTGRES_DB: test_db
-          DATABASE_URL: "postgres://ubuntu@localhost:5432/test_db"
 
 caches: 
   - &bundle_cache v1-repo-{{ checksum "Gemfile.lock" }}
@@ -61,8 +60,7 @@ commands:
           name: Set up DB
           command: |
             bundle exec rake db:create
-            bundle exec rake db:migrate
-
+            bundle exec rails db:schema:load
 jobs:
   lintering:
     executor: default
