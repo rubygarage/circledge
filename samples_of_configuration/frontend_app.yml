@@ -16,8 +16,8 @@ executors:
 
       - image: circleci/postgres:10-alpine
         environment:
-          POSTGRES_USER: online-consulting-backend
-          POSTGRES_DB: online-consulting-backend_test
+          POSTGRES_USER: test
+          POSTGRES_DB: test
           POSTGRES_PASSWORD: ""
 
 caches:
