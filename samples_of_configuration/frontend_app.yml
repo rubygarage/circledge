@@ -11,7 +11,7 @@ executors:
     docker:
       - image: circleci/ruby:2.6.3-node
         environment:
-          PG_USER: online-consulting-backend
+          PG_USER: repo-backend
           RAILS_ENV: test
 
       - image: circleci/postgres:10-alpine
@@ -27,9 +27,9 @@ caches:
 commands:
   restore_yarn_cache:
     steps:
-      restore_cache:
-        keys:
-          - *yarn_cache
+      - restore_cache:
+          keys:
+            - *yarn_cache
 
   yarn_install:
     steps:
@@ -39,11 +39,10 @@ commands:
 
   save_yarn_cache:
     steps:
-      save_cache:
-        name: Save Yarn Package Cache
-        key: *yarn_cache
-        paths:
-          - ~/.cache
+      - save_cache:
+          key: *yarn_cache
+          paths:
+            - ~/.cache
 
   yarn_lint:
     steps: 
@@ -57,16 +56,15 @@ commands:
           name: Running tests
           command: yarn test:circle
 
-  store_artifacts:
+  artifacts_storing:
     steps:
-      store_artifacts:
-          name: Saving Jest coverage
-          path: ~/online-consulting-frontend/coverage/lcov-report
+      - store_artifacts:
+          path: /coverage/lcov-report
           destination: /jest-coverage
 
   start_backend_in_background:
     steps:
-       - run:
+      - run:
           name: Cloning backend repository
           command: git clone -b develop git@github.com:username/repo-backend.git ~/repo-backend
 
@@ -82,7 +80,7 @@ commands:
       - save_cache:
           key: *bundle_cache
           paths:
-            - ~/online-consulting-backend/vendor/bundle
+            - ~/repo-backend/vendor/bundle
 
       - run:
           name: Creating database
@@ -126,7 +124,7 @@ commands:
 
       - store_artifacts:
           name: Saving Cypress screenshots
-          path: ~/online-consulting-frontend/cypress/screenshots
+          path: ~/repo-frontend/cypress/screenshots
           destination: /cypress-screenshots
 
 jobs:
@@ -149,7 +147,7 @@ jobs:
       - yarn_install
       - save_yarn_cache
       - run_tests
-      - store_artifacts
+      - artifacts_storing
   cypress:
     executor: cypress
 
