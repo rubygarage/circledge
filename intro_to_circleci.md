@@ -635,7 +635,7 @@ Each built-in (default) step type is described below.
   - ```fingerprints``` - list of fingerprints corresponding to the keys to be added (default: all keys added)
 
 ### Best Practices
-Often steps may repeating. What could be done to follow DRY principle is using YAML anchors & aliases. For example:
+Often steps may repeating. What could be done to follow DRY principle is using YAML anchors & aliases for Version `2.0` and less. For example:
 
 ```yml
 references:
@@ -661,6 +661,25 @@ steps:
   - <<: *restore_bundle_cache
   - <<: *bundle_install
   - <<: *save_bundle_cache
+```
+
+For version `2.1` use `commands`. For example:
+```yml
+commands:
+  bundle_cache:
+    steps:
+      - restore_cache:
+          keys:
+           - repo-bundle-v2-{{ checksum ".ruby-version" }}-{{ checksum "Gemfile.lock" }}
+      - run: bundle install --path vendor/bundle
+      - save_cache:
+          key: repo-bundle-v2-{{ checksum ".ruby-version" }}-{{ checksum "Gemfile.lock" }}
+          paths:
+            - ~/repo/vendor/bundle
+jobs:
+  build:
+    steps:
+      - bundle_cache
 ```
 
 ## Jobs
