@@ -83,3 +83,83 @@ commands:
     steps:
       - run: echo << parameters.to >>
 ```
+
+# How to update 2.0 to 2.1
+
+## Version 
+
+Don't forget change version
+
+```yml
+versoin: 2.1
+```
+
+## Steps
+
+Move your steps to commands if you use YAML anchors of define in the job.
+
+Use:
+```yml
+commands:
+  bundle_cache:
+    steps:
+      - restore_cache:
+          keys:
+           - repo-bundle-v2-{{ checksum ".ruby-version" }}-{{ checksum "Gemfile.lock" }}
+      - run: bundle install --path vendor/bundle
+      - save_cache:
+          key: repo-bundle-v2-{{ checksum ".ruby-version" }}-{{ checksum "Gemfile.lock" }}
+          paths:
+            - ~/repo/vendor/bundle
+jobs:
+  build:
+    steps:
+      - bundle_cache
+
+```
+Instead:
+```yml
+references:
+  restore_bundle_cache: &restore_bundle_cache
+    restore_cache:
+      keys:
+        - repo-bundle-v2-{{ checksum ".ruby-version" }}-{{ checksum "Gemfile.lock" }}
+  bundle_install: &bundle_install
+    run:
+      name: Installing gems
+      command: bundle install --path vendor/bundle
+
+  save_bundle_cache: &save_bundle_cache
+    save_cache:
+      key: repo-bundle-v2-{{ checksum ".ruby-version" }}-{{ checksum "Gemfile.lock" }}
+      paths:
+        - vendor/bundle
+
+jobs:
+  build:
+    steps:
+      - <<: *restore_bundle_cache
+      - <<: *bundle_install
+      - <<: *save_bundle_cache
+```
+
+## Use executors instead anchors
+
+Use:
+```yml
+executors:
+  default:
+    working_directory: ~/repo
+    description: The official CircleCI Ruby Docker image
+    docker:
+      - image: circleci/ruby:2.6.1-node-browsers
+```
+
+Instead:
+```yml
+default: &default
+  working_directory: ~/repo
+  description: The official CircleCI Ruby Docker image
+  docker:
+    - image: circleci/ruby:2.6.1-node-browsers
+```
