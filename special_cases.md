@@ -468,3 +468,11 @@ The command above will trigger workflows for default branch. You can also specif
 ```
 curl -X POST --header “Content-Type:application/json” --data '{"branch":":your-branch"}' https://circleci.com/api/v1.1/project/:vcs-type/:user-organization/:project-name/build?circle-token=:your-token
 ```
+
+## Auto-deploy to AWS
+
+1) Create a AWS account and setup [EC2 instance](https://docs.aws.amazon.com/AmazonECS/latest/developerguide/Welcome.html)
+
+2) Add `AWS_ACCESS_KEY_ID`, `AWS_DEFAULT_REGION`, `AWS_SECRET_ACCESS_KEY` to environment variables in project setting in circleci UI
+
+3)
